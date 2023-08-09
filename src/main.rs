@@ -15,8 +15,7 @@ fn main() -> Result<(), slint::PlatformError> {
         move || {
             let ui = ui_handle.unwrap();
             let date = Local::now();
-            //let datstring = format!("{}", date.format("%H:%M:%S"));
-            let datestring = "fooo";
+            let datestring = format!("{}", date.format("%H:%M:%S"));
             ui.set_time(datestring.into());
         },
     );
