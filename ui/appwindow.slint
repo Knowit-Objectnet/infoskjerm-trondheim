@@ -1,0 +1,73 @@
+import { Button, VerticalBox } from "std-widgets.slint";
+
+import { GridBox } from "std-widgets.slint";
+
+
+
+component Fidget inherits Rectangle {
+    background: #3960D5;
+    Image {
+        source: @image-url("../icons/bus.png");
+        width: parent.width;
+        height: parent.height;
+    }
+}
+
+
+export component AppWindow inherits Window {
+    title: "Infoskjerm";
+    //todo: set these programtically
+    width: 768px;
+    height: 1024px;
+    in property <string> time;
+    GridLayout{
+        spacing: 5px;
+        Row {
+            Text{
+                colspan: 2;
+                text: "Trondheimskontorets infoskjerm (work in progress)";
+                font-family: "sans";
+                font-size: 2rem;
+                horizontal-alignment: center;
+            }
+        }
+     
+        Row{
+            Rectangle {
+                background: red;
+                Text{
+                    text: "Busstider?";
+                }
+            }
+            Rectangle {
+                background: blue;
+                Text{
+                    text: "Event-kelender?";
+                }
+            }
+        }
+        Row {
+            Rectangle {
+                background: green;
+                Text{
+                    text: "Slack-aktivitet?";
+                }
+            }
+            Rectangle {
+                background: violet;
+                Text{
+                    text: "Værmelding?";
+                }
+            }
+        }
+        Row {
+            Text {
+                colspan: 2;
+                horizontal-alignment: right;
+                font-size: 3rem;
+                font-family: "sans";
+                text: time;
+            }
+        }
+    }
+}
