@@ -11,14 +11,15 @@ export component AppWindow inherits Window {
     background:  #030201;
     in property <string> time;
     GridLayout{
+        padding-top: 3rem;
         spacing: 5px;
         Row {
             Text{
                 color: whitesmoke;
                 colspan: 2;
-                text: "Trondheimkontorets infoskjerm (work in progress)";
+                text: "Trondheimkontorets infoskjerm \n (work in progress)";
                 font-family: "sans";
-                font-size: 2rem;
+                font-size: 4rem;
                 horizontal-alignment: center;
             }
         }
@@ -27,13 +28,15 @@ export component AppWindow inherits Window {
             Rectangle {
                 background: red;
                 Text{
+                    font-size: 2rem;
                     text: "Busstider?";
                 }
             }
             Rectangle {
                 background: blue;
                 Text{
-                    text: "Event-kelender?";
+                    font-size: 2rem;
+                    text: "Event-kalender?";
                 }
             }
         }
@@ -41,14 +44,23 @@ export component AppWindow inherits Window {
             Rectangle {
                 background: green;
                 Text{
+                    font-size: 2rem;
                     text: "Slack-aktivitet?";
                 }
             }
             Rectangle {
                 background: violet;
                 Text{
+                    font-size: 2rem;
                     text: "Værmelding?";
                 }
+            }
+        }
+        Row {
+            Image {
+                colspan: 2;
+                max-height: 25rem;
+                source: @image-url("xkcd.png");
             }
         }
         Row {
@@ -61,5 +73,6 @@ export component AppWindow inherits Window {
                 text: time;
             }
         }
+        
     }
 }
