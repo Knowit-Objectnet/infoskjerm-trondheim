@@ -3,27 +3,18 @@ import { Button, VerticalBox } from "std-widgets.slint";
 import { GridBox } from "std-widgets.slint";
 
 
-
-component Fidget inherits Rectangle {
-    background: #3960D5;
-    Image {
-        source: @image-url("../icons/bus.png");
-        width: parent.width;
-        height: parent.height;
-    }
-}
-
-
 export component AppWindow inherits Window {
     title: "Infoskjerm";
     //todo: set these programtically
     width: 768px;
     height: 1024px;
+    background:  #030201;
     in property <string> time;
     GridLayout{
         spacing: 5px;
         Row {
             Text{
+                color: whitesmoke;
                 colspan: 2;
                 text: "Trondheimskontorets infoskjerm (work in progress)";
                 font-family: "sans";
@@ -62,6 +53,7 @@ export component AppWindow inherits Window {
         }
         Row {
             Text {
+                color: whitesmoke;
                 colspan: 2;
                 horizontal-alignment: right;
                 font-size: 3rem;
