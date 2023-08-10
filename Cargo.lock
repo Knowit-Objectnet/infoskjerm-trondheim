@@ -1921,6 +1921,7 @@ name = "infoskjerm"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "image",
  "reqwest",
  "slint",
  "slint-build",
