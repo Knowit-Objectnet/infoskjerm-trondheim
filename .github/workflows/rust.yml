@@ -19,6 +19,6 @@ jobs:
     - name: Install ARM Target
       run: rustup target add arm-unknown-linux-gnueabihf
     - name: Install Cross
-      run: cargo install Cross
+      run: cargo install cross
     - name: Build
       run: cross build --release --target=arm-unknown-linux-gnueabihf
