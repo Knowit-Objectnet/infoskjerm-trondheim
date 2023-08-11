@@ -1,7 +1,10 @@
 use image::io::Reader as ImageReader;
+use reqwest::Response;
+use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
 use std::io::Cursor;
 
+#[derive(Debug, Deserialize, Serialize)]
 struct XkcdJson {
     pub month: String,
     pub num: i64,
@@ -23,10 +26,15 @@ pub struct Xkcd {
 }
 
 pub fn get_current_xkcd() -> Xkcd {
+    let url = "https://xkcd.com/info.0.json";
+    let response = reqwest::blocking::get(url).unwrap();
+
+    let xkcd_metadata = response.json::<XkcdJson>().unwrap();
+
     let xkcd = Xkcd {
-        title: "Hehe".to_owned(),
-        image: get_current_xkcd_image("https://imgs.xkcd.com/comics/what_to_do_2x.png".to_owned()),
-        flavor_text: "Flavortown".to_owned(),
+        title: xkcd_metadata.title,
+        image: get_current_xkcd_image(xkcd_metadata.img),
+        flavor_text: xkcd_metadata.alt,
     };
 
     xkcd
