@@ -10,9 +10,11 @@ export component AppWindow inherits Window {
     height: 1024px;
     background:  #030201;
 
-    in property <string> time: "12:00:00";
-    in property <string> xkcdTitle: "Title";
-    in property <image> xkcdImage: @image-url("xkcd.png");
+    in property <string> time: "12:34:56";
+    in property <string> xkcdTitle: "Lorem ipsum";
+    in property <image> xkcdImage: @image-url("./img/xkcd.png");
+    in property <string> xkcdFlavorText: "Dolor sit amet";
+
     
     GridLayout{
         padding-top: 3rem;
@@ -61,18 +63,26 @@ export component AppWindow inherits Window {
             }
         }
         Row {
-            GridBox{
+            VerticalBox {
                 colspan: 2;
-                Text {
-                    color: whitesmoke;
-                    text: xkcdTitle;
-                }
+                spacing: 0;
+                alignment: start;
                 Image {
                     max-height: 25rem;
                     source: xkcdImage;
                 }
+                Text {
+                    horizontal-alignment: center;
+                    color: whitesmoke;
+                    text: xkcdTitle;
+                    font-weight: 1000;
+                }
+                Text {
+                    horizontal-alignment: center;
+                    color: whitesmoke;
+                    text: xkcdFlavorText;
+                }
             }
-           
         }
         Row {
             Text {

@@ -8,6 +8,7 @@ use slint::{Timer, TimerMode};
 mod xkcd;
 use crate::xkcd::*;
 
+
 fn main() -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let clock_timer = Timer::default();
@@ -32,10 +33,11 @@ fn main() -> Result<(), slint::PlatformError> {
         std::time::Duration::from_secs(1),
         move || {
             let ui = ui_handle2.unwrap();
-            ui.set_xkcdTitle("jeje".into());
 
-            let image = get_current_xkcd_image();
-            ui.set_xkcdImage(image);
+            let xkcd = get_current_xkcd();
+            ui.set_xkcdTitle(xkcd.title.into());
+            ui.set_xkcdImage(xkcd.image);
+            ui.set_xkcdFlavorText(xkcd.flavor_text.into());
         },
     );
 
