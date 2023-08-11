@@ -1,5 +1,4 @@
 use image::io::Reader as ImageReader;
-use reqwest::Response;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
 use std::io::Cursor;
