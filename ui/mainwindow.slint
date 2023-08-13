@@ -1,35 +1,27 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox } from "std-widgets.slint";
+import { XkcdWidget } from "xkcdwidget.slint";
 
 
-export component AppWindow inherits Window {
+
+export component MainWindow inherits Window {
     title: "Infoskjerm";
     //todo: set these programtically
-    width: 768px;
-    height: 1024px;
+    width: 540px;
+    height: 960px;
     background:  #030201;
 
     in property <string> time: "12:34:56";
+
     in property <string> xkcdTitle: "Lorem ipsum";
-    in property <image> xkcdImage: @image-url("./img/xkcd.png");
     in property <string> xkcdFlavorText: "Dolor sit amet";
+    in property <image> xkcdImage: @image-url("./img/xkcd.png");
+
 
     
     GridLayout{
-        padding-top: 3rem;
         spacing: 5px;
-        Row {
-            Text{
-                color: whitesmoke;
-                colspan: 2;
-                text: "Trondheimkontorets infoskjerm \n (work in progress)";
-                font-family: "sans";
-                font-size: 4rem;
-                horizontal-alignment: center;
-            }
-        }
-     
         Row{
             Rectangle {
                 background: red;
@@ -62,28 +54,17 @@ export component AppWindow inherits Window {
                 }
             }
         }
+        
         Row {
-            VerticalBox {
+            XkcdWidget {
                 colspan: 2;
-                spacing: 0;
-                alignment: start;
-                Image {
-                    source: xkcdImage;
-                }
-                Text {
-                    horizontal-alignment: center;
-                    color: whitesmoke;
-                    text: xkcdTitle;
-                    font-weight: 1000;
-                }
-                Text {
-                    wrap: word-wrap;
-                    horizontal-alignment: center;
-                    color: whitesmoke;
-                    text: xkcdFlavorText;
-                }
-            }
+                max-height: 30rem;
+                image: xkcdImage;
+                flavorText: xkcdFlavorText;
+                title: xkcdTitle;
+             }
         }
+
         Row {
             Text {
                 color: whitesmoke;

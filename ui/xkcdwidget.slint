@@ -1,0 +1,26 @@
+import { Button, VerticalBox } from "std-widgets.slint";
+
+export component XkcdWidget {
+    in property <string> title;
+    in property <image> image;
+    in property <string> flavorText;
+        VerticalBox {
+            spacing: 0;
+            alignment: start;
+            Image {
+                source: image;
+            }
+            Text {
+                horizontal-alignment: center;
+                color: whitesmoke;
+                text: title;
+                font-weight: 1000;
+            }
+            Text {
+                wrap: word-wrap;
+                horizontal-alignment: center;
+                color: whitesmoke;
+                text: flavorText;
+            }
+        }
+ }
