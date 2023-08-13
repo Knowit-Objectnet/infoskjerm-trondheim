@@ -5,7 +5,10 @@ extern crate chrono;
 use chrono::Local;
 use slint::{Timer, TimerMode};
 
+mod weather;
 mod xkcd;
+
+use crate::weather::*;
 use crate::xkcd::*;
 
 fn main() -> Result<(), slint::PlatformError> {

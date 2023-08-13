@@ -2,6 +2,7 @@ import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox } from "std-widgets.slint";
 import { XkcdWidget } from "xkcdwidget.slint";
+import { WeatherWidget } from "weatherwidget.slint";
 
 
 
@@ -48,10 +49,7 @@ export component MainWindow inherits Window {
             }
             Rectangle {
                 background: violet;
-                Text{
-                    font-size: 2rem;
-                    text: "Værmelding?";
-                }
+                WeatherWidget {  }
             }
         }
         
