@@ -15,6 +15,8 @@ export component MainWindow inherits Window {
 
     in property <string> time: "12:34:56";
 
+    in property <string> weather: "Fint vær";
+
     in property <string> xkcdTitle: "Lorem ipsum";
     in property <string> xkcdFlavorText: "Dolor sit amet";
     in property <image> xkcdImage: @image-url("./img/xkcd.png");
@@ -22,57 +24,53 @@ export component MainWindow inherits Window {
 
     
     GridLayout{
-        spacing: 5px;
-        Row{
-            Rectangle {
-                background: red;
-                Text{
-                    font-size: 2rem;
-                    text: "Busstider?";
-                }
-            }
-            Rectangle {
-                background: blue;
-                Text{
-                    font-size: 2rem;
-                    text: "Event-kalender?";
-                }
+        Rectangle {
+            background: red;
+            Text{
+                font-size: 2rem;
+                text: "Busstider?";
             }
         }
-        Row {
-            Rectangle {
-                background: green;
-                Text{
-                    font-size: 2rem;
-                    text: "Slack-aktivitet?";
-                }
-            }
-            Rectangle {
-                background: violet;
-                WeatherWidget {  }
-            }
-        }
-        
-        Row {
-            XkcdWidget {
-                colspan: 2;
-                max-height: 30rem;
-                image: xkcdImage;
-                flavorText: xkcdFlavorText;
-                title: xkcdTitle;
+        Rectangle {
+            background: blue;
+            Text{
+                font-size: 2rem;
+                text: "Event-kalender?";
              }
         }
-
-        Row {
-            Text {
-                color: whitesmoke;
-                colspan: 2;
-                horizontal-alignment: right;
-                font-size: 4rem;
-                font-family: "sans";
-                text: time;
+        Rectangle {
+            row: 1;
+            background: green;
+            Text{
+                font-size: 2rem;
+                text: "Slack-aktivitet?";
             }
         }
         
+        WeatherWidget {
+            row: 1;
+            col: 1; 
+            weather: weather;
+        }
+    
+        XkcdWidget {
+            row: 2;
+            colspan: 2;
+            max-height: 30rem;
+            image: xkcdImage;
+            flavorText: xkcdFlavorText;
+            title: xkcdTitle;
+            }
+
+        Text {
+            row: 3;
+            colspan: 2;
+            color: whitesmoke;
+            horizontal-alignment: right;
+            font-size: 4rem;
+            font-family: "sans";
+            text: time;
+        }
+
     }
 }

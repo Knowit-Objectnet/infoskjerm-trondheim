@@ -1,5 +1,5 @@
 pub struct Forecast {
-    foo: String,
+    pub foo: String,
 }
 
 pub fn get_forecast() -> Forecast {

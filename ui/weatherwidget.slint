@@ -1,7 +1,36 @@
 export component WeatherWidget { 
-    in property <string> weather: "Ja, det blir vær";
-
-    Text{
-        text: weather;
+    in property <string> weather;
+    VerticalLayout {
+        alignment: start;
+        Text {
+            color: whitesmoke;
+            font-size: 2rem;
+            text: "Været i dag:";
+        }
+        Text {
+            color: whitesmoke;
+            text: weather;
+        }
+        Text {
+            color: whitesmoke;
+            text: weather;
+        } 
+        Text {
+            color: whitesmoke;
+            text: weather;
+        } 
+        Text {
+            color: whitesmoke;
+            text: weather;
+        } 
+        Text {
+            color: whitesmoke;
+            text: weather;
+        } 
+        Text {
+            color: whitesmoke;
+            text: weather;
+        }  
     }
+    
  }
