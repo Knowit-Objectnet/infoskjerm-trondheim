@@ -2,24 +2,29 @@ import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox } from "std-widgets.slint";
 import { XkcdWidget } from "xkcdwidget.slint";
-import { WeatherWidget } from "weatherwidget.slint";
-
-
+import { WeatherWidget, Forecast } from "weatherwidget.slint";
 
 export component MainWindow inherits Window {
+   in property <string> time: "12:34:56";
+
+    in property <[Forecast]> forecasts: [{
+        time: "12:00",
+        temp: "3.0",
+        icon: @image-url("./img/weather/fog.png"),
+        precipitation: "4.0"
+    }];
+
+    //TODO: refactor into custom struct
+    in property <string> xkcdTitle: "Lorem ipsum";
+    in property <string> xkcdFlavorText: "Dolor sit amet";
+    in property <image> xkcdImage: @image-url("./img/xkcd.png");
+
     title: "Infoskjerm";
     //todo: set these programtically
     width: 540px;
     height: 960px;
     background:  #030201;
-
-    in property <string> time: "12:34:56";
-
-    in property <string> weather: "Fint vær";
-
-    in property <string> xkcdTitle: "Lorem ipsum";
-    in property <string> xkcdFlavorText: "Dolor sit amet";
-    in property <image> xkcdImage: @image-url("./img/xkcd.png");
+    default-font-family: "sans";
 
 
     
@@ -50,7 +55,7 @@ export component MainWindow inherits Window {
         WeatherWidget {
             row: 1;
             col: 1; 
-            weather: weather;
+            forecasts: forecasts;
         }
     
         XkcdWidget {
@@ -68,9 +73,7 @@ export component MainWindow inherits Window {
             color: whitesmoke;
             horizontal-alignment: right;
             font-size: 4rem;
-            font-family: "sans";
             text: time;
         }
-
     }
 }

@@ -2,6 +2,8 @@ slint::include_modules!();
 
 extern crate chrono;
 
+use std::rc::Rc;
+
 use chrono::Local;
 use slint::{Timer, TimerMode};
 
@@ -50,13 +52,16 @@ fn main() -> Result<(), slint::PlatformError> {
         },
     );
 
+    let forecasts = get_forecast();
+    ui.set_forecasts(Rc::new(forecasts).into());
+
     weather_timer.start(
         TimerMode::Repeated,
-        std::time::Duration::from_secs(2),
+        std::time::Duration::from_secs(900),
         move || {
             let ui = ui_handle3.unwrap();
-            let forecast = get_forecast();
-            ui.set_weather(forecast.foo.into());
+            let forecasts = get_forecast();
+            ui.set_forecasts(Rc::new(forecasts).into());
         },
     );
 

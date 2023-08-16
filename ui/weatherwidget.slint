@@ -1,36 +1,52 @@
+export struct Forecast {
+    time: string,
+    temp: string,
+    icon: image,
+    precipitation: string,
+}
+
+component WeatherLine {
+    in property <Forecast> forecast;
+    HorizontalLayout {
+        spacing: 1.5rem;
+        alignment: center;
+        Text {
+            color: whitesmoke;
+            text: forecast.time;
+        }
+
+        Image {
+            max-height: 1rem;
+            max-width: 1rem;
+            source: forecast.icon;
+        }
+
+        Text {
+            color: whitesmoke;
+            text: forecast.temp + "°c";
+        }
+
+        Text {
+            color: whitesmoke;
+            text: forecast.precipitation + "mm";
+        }
+    }
+}
+
 export component WeatherWidget { 
-    in property <string> weather;
+    in property <[Forecast]> forecasts;
     VerticalLayout {
         alignment: start;
+        padding-top: 2rem;
         Text {
             color: whitesmoke;
             font-size: 2rem;
             text: "Været i dag:";
+            horizontal-alignment: center;
         }
-        Text {
-            color: whitesmoke;
-            text: weather;
+        for f in forecasts : WeatherLine {
+           forecast: f;
         }
-        Text {
-            color: whitesmoke;
-            text: weather;
-        } 
-        Text {
-            color: whitesmoke;
-            text: weather;
-        } 
-        Text {
-            color: whitesmoke;
-            text: weather;
-        } 
-        Text {
-            color: whitesmoke;
-            text: weather;
-        } 
-        Text {
-            color: whitesmoke;
-            text: weather;
-        }  
     }
     
  }
