@@ -13,22 +13,25 @@ component WeatherLine {
         Text {
             color: whitesmoke;
             text: forecast.time;
+            font-size: 2rem;
         }
 
         Image {
-            max-height: 1rem;
-            max-width: 1rem;
+            max-height: 3rem;
+            max-width: 3rem;
             source: forecast.icon;
         }
 
         Text {
             color: whitesmoke;
             text: forecast.temp + "°c";
+            font-size: 2rem;
         }
 
         Text {
             color: whitesmoke;
             text: forecast.precipitation + "mm";
+            font-size: 2rem;
         }
     }
 }
@@ -40,7 +43,7 @@ export component WeatherWidget {
         padding-top: 2rem;
         Text {
             color: whitesmoke;
-            font-size: 2rem;
+            font-size: 4rem;
             text: "Været i dag:";
             horizontal-alignment: center;
         }
