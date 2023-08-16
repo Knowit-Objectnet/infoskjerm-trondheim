@@ -10,14 +10,14 @@ export component MainWindow inherits Window {
     in property <[Forecast]> forecasts: [{
         time: "12:00",
         temp: "3.0",
-        icon: @image-url("./img/weather/fog.png"),
+        icon: @image-url("../img/weather/fog.png"),
         precipitation: "4.0"
     }];
 
     //TODO: refactor into custom struct
     in property <string> xkcdTitle: "Lorem ipsum";
     in property <string> xkcdFlavorText: "Dolor sit amet";
-    in property <image> xkcdImage: @image-url("./img/xkcd.png");
+    in property <image> xkcdImage: @image-url("../img/xkcd.png");
 
     title: "Infoskjerm";
     //todo: set these programtically

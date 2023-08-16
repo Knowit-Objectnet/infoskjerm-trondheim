@@ -97,7 +97,7 @@ pub fn get_forecast() -> VecModel<Forecast> {
     //TODO: error handling
     for f in next_hours_of_forecasts {
         let icon_raw = image::open(format!(
-            "ui/img/weather/{}.png",
+            "img/weather/{}.png",
             f.data.next_1_hours.clone().unwrap().summary.symbol_code
         ))
         .expect("Error loading weather icon")
