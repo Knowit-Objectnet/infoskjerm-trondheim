@@ -1,6 +1,6 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
-import { GridBox } from "std-widgets.slint";
+import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
 
@@ -42,11 +42,38 @@ export component MainWindow inherits Window {
             title: xkcdTitle;
             }
 
-        Text {
-            color: whitesmoke;
-            horizontal-alignment: right;
-            font-size: 4rem;
-            text: time;
-        }
+        HorizontalBox {
+            alignment: space-between;
+            VerticalLayout {
+                alignment: end;
+                spacing: -3px;
+                padding-bottom: 6px;
+                Text {
+                    font-size: 2.4rem;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    color: whitesmoke;
+                    text: 17;
+                }
+                Text {
+                    font-size: 1.1rem;
+                    horizontal-alignment: center;
+                    color: whitesmoke;
+                    text: "AUG";
+                }
+            }   
+    
+            Text {
+                color: whitesmoke;
+                horizontal-alignment: right;
+                font-size: 4rem;
+                text: time;
+            }
+    }
+
+        
+
+
+        
     }
 }
