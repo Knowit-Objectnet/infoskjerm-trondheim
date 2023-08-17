@@ -19,15 +19,15 @@ fn main() -> Result<(), slint::PlatformError> {
     let xkcd_timer = Timer::default();
     let weather_timer = Timer::default();
 
-    let ui_handle = ui.as_weak();
-    let ui_handle2 = ui.as_weak();
-    let ui_handle3 = ui.as_weak();
+    let clock_handle = ui.as_weak();
+    let xkcd_handle = ui.as_weak();
+    let weather_handle = ui.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
         std::time::Duration::from_millis(1000),
         move || {
-            let ui = ui_handle.unwrap();
+            let ui = clock_handle.unwrap();
             let date = Local::now();
             let datestring = format!("{}", date.format("%H:%M:%S"));
             ui.set_time(datestring.into());
@@ -43,8 +43,7 @@ fn main() -> Result<(), slint::PlatformError> {
         TimerMode::Repeated,
         std::time::Duration::from_secs(3600 * 24),
         move || {
-            let ui = ui_handle2.unwrap();
-
+            let ui = xkcd_handle.unwrap();
             let xkcd = get_current_xkcd();
             ui.set_xkcdTitle(xkcd.title.into());
             ui.set_xkcdImage(xkcd.image);
@@ -59,7 +58,7 @@ fn main() -> Result<(), slint::PlatformError> {
         TimerMode::Repeated,
         std::time::Duration::from_secs(900),
         move || {
-            let ui = ui_handle3.unwrap();
+            let ui = weather_handle.unwrap();
             let forecasts = get_forecast();
             ui.set_forecasts(Rc::new(forecasts).into());
         },

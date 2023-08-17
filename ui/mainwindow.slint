@@ -21,46 +21,21 @@ export component MainWindow inherits Window {
 
     title: "Infoskjerm";
     //todo: set these programtically
-    width: 540px;
-    height: 960px;
+    // width: 540px;
+    // height: 960px;
     background:  #030201;
     default-font-family: "sans";
 
 
     
-    GridLayout{
-        Rectangle {
-            background: red;
-            Text{
-                font-size: 2rem;
-                text: "Busstider?";
-            }
-        }
-        Rectangle {
-            background: blue;
-            Text{
-                font-size: 2rem;
-                text: "Event-kalender?";
-             }
-        }
-        Rectangle {
-            row: 1;
-            background: green;
-            Text{
-                font-size: 2rem;
-                text: "Slack-aktivitet?";
-            }
-        }
-        
+    VerticalLayout{
+        alignment: space-between;
+
         WeatherWidget {
-            row: 1;
-            col: 1; 
             forecasts: forecasts;
         }
-    
+        
         XkcdWidget {
-            row: 2;
-            colspan: 2;
             max-height: 30rem;
             image: xkcdImage;
             flavorText: xkcdFlavorText;
@@ -68,8 +43,6 @@ export component MainWindow inherits Window {
             }
 
         Text {
-            row: 3;
-            colspan: 2;
             color: whitesmoke;
             horizontal-alignment: right;
             font-size: 4rem;

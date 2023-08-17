@@ -91,7 +91,6 @@ pub fn get_forecast() -> VecModel<Forecast> {
     let response = client.get(api_url).headers(headers).send().unwrap();
     let forecast_data = response.json::<ForecastRaw>().unwrap();
     let next_hours_of_forecasts = forecast_data.properties.timeseries[0..7].to_vec();
-
     let forecast_vector = VecModel::default();
 
     //TODO: error handling
@@ -113,19 +112,22 @@ pub fn get_forecast() -> VecModel<Forecast> {
         let datetime = DateTime::parse_from_rfc3339(f.time.as_str())
             .unwrap()
             .with_timezone(&Utc);
-
         let local_datetime = datetime.with_timezone(&Local);
         let time = local_datetime.format("%H:%M").to_string().into();
 
+        let temp = format!("{:.1}", f.data.instant.details.air_temperature).into();
+
+        let precipitation = format!(
+            "{:.1}",
+            f.data.next_1_hours.unwrap().details.precipitation_amount
+        )
+        .into();
+
         forecast_vector.push(Forecast {
             time,
-            temp: format!("{:.1}", f.data.instant.details.air_temperature).into(),
+            temp,
             icon,
-            precipitation: format!(
-                "{:.1}",
-                f.data.next_1_hours.unwrap().details.precipitation_amount
-            )
-            .into(),
+            precipitation,
         })
     }
 
