@@ -5,8 +5,9 @@ import { XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
 
 export component MainWindow inherits Window {
-   in property <string> time: "12:34:56";
-
+    in property <string> time: "12:34:56";
+    in property <string> date: "01";
+    in property <string> month: "jan" ;
     in property <[Forecast]> forecasts: [{
         time: "12:00",
         temp: "3.0",
@@ -53,13 +54,13 @@ export component MainWindow inherits Window {
                     font-weight: 700;
                     horizontal-alignment: center;
                     color: whitesmoke;
-                    text: 17;
+                    text: date;
                 }
                 Text {
                     font-size: 1.1rem;
                     horizontal-alignment: center;
                     color: whitesmoke;
-                    text: "AUG";
+                    text: month;
                 }
             }   
     
@@ -70,10 +71,6 @@ export component MainWindow inherits Window {
                 text: time;
             }
     }
-
-        
-
-
         
     }
 }

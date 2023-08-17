@@ -28,9 +28,13 @@ fn main() -> Result<(), slint::PlatformError> {
         std::time::Duration::from_millis(1000),
         move || {
             let ui = clock_handle.unwrap();
-            let date = Local::now();
-            let datestring = format!("{}", date.format("%H:%M:%S"));
+            let now = Local::now();
+            let datestring = format!("{}", now.format("%H:%M:%S"));
+            let date = now.format("%d").to_string().into();
+            let month = now.format("%b").to_string().to_uppercase().into();
             ui.set_time(datestring.into());
+            ui.set_month(month);
+            ui.set_date(date);
         },
     );
 
