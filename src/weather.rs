@@ -101,7 +101,13 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
 
         let icon_name = next_hour.clone().summary.symbol_code;
         let icon_path = format!("weather/{}.png", icon_name);
-        let icon_data = StaticAssets::get(&icon_path).unwrap().data.into_owned();
+        let icon_data = match StaticAssets::get(&icon_path) {
+            Some(icon_data) => icon_data.data.into_owned(),
+            None => StaticAssets::get("not-found.png")
+                .unwrap()
+                .data
+                .into_owned(),
+        };
 
         let weather_icon =
             image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)?.into_rgba8();
