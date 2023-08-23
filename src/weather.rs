@@ -1,3 +1,5 @@
+use std::error;
+
 use super::Forecast;
 use super::StaticAssets;
 use reqwest::header;
@@ -76,7 +78,7 @@ pub struct Details {
     #[serde(rename = "precipitation_amount")]
     pub precipitation_amount: f32,
 }
-pub fn get_forecast() -> VecModel<Forecast> {
+pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
     let api_url =
         "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
 
@@ -89,23 +91,20 @@ pub fn get_forecast() -> VecModel<Forecast> {
         ),
     );
 
-    let response = client.get(api_url).headers(headers).send().unwrap();
-    let forecast_data = response.json::<ForecastRaw>().unwrap();
+    let response = client.get(api_url).headers(headers).send()?;
+    let forecast_data = response.json::<ForecastRaw>()?;
     let next_hours_of_forecasts = forecast_data.properties.timeseries[0..7].to_vec();
     let forecast_vector = VecModel::default();
 
-    //TODO: error handling
     for f in next_hours_of_forecasts {
-        let icon_path = &format!(
-            "weather/{}.png",
-            f.data.next_1_hours.clone().unwrap().summary.symbol_code
-        );
+        let next_hour = f.data.next_1_hours.unwrap_or_default();
 
-        let icon_data = StaticAssets::get(icon_path).unwrap().data.into_owned();
+        let icon_name = next_hour.clone().summary.symbol_code;
+        let icon_path = format!("weather/{}.png", icon_name);
+        let icon_data = StaticAssets::get(&icon_path).unwrap().data.into_owned();
 
-        let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
-            .unwrap()
-            .into_rgba8();
+        let weather_icon =
+            image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)?.into_rgba8();
 
         let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
             weather_icon.as_raw(),
@@ -115,19 +114,13 @@ pub fn get_forecast() -> VecModel<Forecast> {
 
         let icon = Image::from_rgba8(buffer);
 
-        let datetime = DateTime::parse_from_rfc3339(f.time.as_str())
-            .unwrap()
-            .with_timezone(&Utc);
+        let datetime = DateTime::parse_from_rfc3339(f.time.as_str())?.with_timezone(&Utc);
         let local_datetime = datetime.with_timezone(&Local);
         let time = local_datetime.format("%H:%M").to_string().into();
 
         let temp = format!("{:.1}", f.data.instant.details.air_temperature).into();
 
-        let precipitation = format!(
-            "{:.1}",
-            f.data.next_1_hours.unwrap().details.precipitation_amount
-        )
-        .into();
+        let precipitation = format!("{:.1}", next_hour.details.precipitation_amount).into();
 
         forecast_vector.push(Forecast {
             time,
@@ -137,5 +130,5 @@ pub fn get_forecast() -> VecModel<Forecast> {
         })
     }
 
-    forecast_vector
+    Ok(forecast_vector)
 }

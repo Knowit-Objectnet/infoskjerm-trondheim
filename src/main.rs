@@ -61,16 +61,20 @@ fn main() -> Result<(), slint::PlatformError> {
         },
     );
 
-    let forecasts = get_forecast();
-    ui.set_forecasts(Rc::new(forecasts).into());
+    match get_forecast() {
+        Ok(forecasts) => ui.set_forecasts(Rc::new(forecasts).into()),
+        Err(e) => eprintln!("{}", e),
+    }
 
     weather_timer.start(
         TimerMode::Repeated,
         std::time::Duration::from_secs(900),
         move || {
             let ui = weather_handle.unwrap();
-            let forecasts = get_forecast();
-            ui.set_forecasts(Rc::new(forecasts).into());
+            match get_forecast() {
+                Ok(forecasts) => ui.set_forecasts(Rc::new(forecasts).into()),
+                Err(e) => eprintln!("{}", e),
+            }
         },
     );
 
