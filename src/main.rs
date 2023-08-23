@@ -1,3 +1,4 @@
+use rust_embed::RustEmbed;
 slint::include_modules!();
 
 extern crate chrono;
@@ -12,6 +13,11 @@ mod xkcd;
 
 use crate::weather::*;
 use crate::xkcd::*;
+
+// we embed img folder into the compiled binary for simpler distribution
+#[derive(RustEmbed)]
+#[folder = "img/"]
+struct StaticAssets;
 
 fn main() -> Result<(), slint::PlatformError> {
     let ui = MainWindow::new()?;

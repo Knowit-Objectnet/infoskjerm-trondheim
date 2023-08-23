@@ -1,4 +1,5 @@
 use super::Forecast;
+use super::StaticAssets;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
@@ -95,18 +96,23 @@ pub fn get_forecast() -> VecModel<Forecast> {
 
     //TODO: error handling
     for f in next_hours_of_forecasts {
-        let icon_raw = image::open(format!(
-            "img/weather/{}.png",
+        let icon_path = &format!(
+            "weather/{}.png",
             f.data.next_1_hours.clone().unwrap().summary.symbol_code
-        ))
-        .expect("Error loading weather icon")
-        .into_rgba8();
+        );
+
+        let icon_data = StaticAssets::get(icon_path).unwrap().data.into_owned();
+
+        let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
+            .unwrap()
+            .into_rgba8();
 
         let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-            icon_raw.as_raw(),
-            icon_raw.width(),
-            icon_raw.height(),
+            weather_icon.as_raw(),
+            weather_icon.width(),
+            weather_icon.height(),
         );
+
         let icon = Image::from_rgba8(buffer);
 
         let datetime = DateTime::parse_from_rfc3339(f.time.as_str())
