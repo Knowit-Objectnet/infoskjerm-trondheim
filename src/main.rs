@@ -45,19 +45,15 @@ fn main() -> Result<(), slint::PlatformError> {
     );
 
     let xkcd = get_current_xkcd();
-    ui.set_xkcdTitle(xkcd.title.into());
-    ui.set_xkcdFlavorText(xkcd.flavor_text.into());
-    ui.set_xkcdImage(xkcd.image);
+    ui.set_xkcd(xkcd);
 
     xkcd_timer.start(
         TimerMode::Repeated,
-        std::time::Duration::from_secs(3600 * 24),
+        std::time::Duration::from_secs(3600 * 2),
         move || {
             let ui = xkcd_handle.unwrap();
             let xkcd = get_current_xkcd();
-            ui.set_xkcdTitle(xkcd.title.into());
-            ui.set_xkcdImage(xkcd.image);
-            ui.set_xkcdFlavorText(xkcd.flavor_text.into());
+            ui.set_xkcd(xkcd)
         },
     );
 

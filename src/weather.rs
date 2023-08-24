@@ -99,7 +99,7 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
     for f in next_hours_of_forecasts {
         let next_hour = f.data.next_1_hours.unwrap_or_default();
 
-        let icon_name = next_hour.clone().summary.symbol_code;
+        let icon_name = next_hour.summary.symbol_code;
         let icon_path = format!("weather/{}.png", icon_name);
         let icon_data = match StaticAssets::get(&icon_path) {
             Some(icon_data) => icon_data.data.into_owned(),

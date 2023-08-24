@@ -1,3 +1,5 @@
+use super::Xkcd;
+
 use image::io::Reader as ImageReader;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
@@ -18,12 +20,6 @@ struct XkcdJson {
     pub day: String,
 }
 
-pub struct Xkcd {
-    pub title: String,
-    pub image: Image,
-    pub flavor_text: String,
-}
-
 pub fn get_current_xkcd() -> Xkcd {
     let url = "https://xkcd.com/info.0.json";
     let response = reqwest::blocking::get(url).unwrap();
@@ -31,9 +27,9 @@ pub fn get_current_xkcd() -> Xkcd {
     let xkcd_metadata = response.json::<XkcdJson>().unwrap();
 
     let xkcd = Xkcd {
-        title: xkcd_metadata.title,
+        title: xkcd_metadata.title.into(),
         image: get_current_xkcd_image(xkcd_metadata.img),
-        flavor_text: xkcd_metadata.alt,
+        flavor_text: xkcd_metadata.alt.into(),
     };
 
     xkcd
