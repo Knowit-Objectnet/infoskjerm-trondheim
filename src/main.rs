@@ -44,16 +44,20 @@ fn main() -> Result<(), slint::PlatformError> {
         },
     );
 
-    let xkcd = get_current_xkcd();
-    ui.set_xkcd(xkcd);
+    match get_current_xkcd() {
+        Ok(xkcd) => ui.set_xkcd(xkcd),
+        Err(e) => eprintln!("{}", e),
+    }
 
     xkcd_timer.start(
         TimerMode::Repeated,
         std::time::Duration::from_secs(3600 * 2),
         move || {
             let ui = xkcd_handle.unwrap();
-            let xkcd = get_current_xkcd();
-            ui.set_xkcd(xkcd)
+            match get_current_xkcd() {
+                Ok(xkcd) => ui.set_xkcd(xkcd),
+                Err(e) => eprintln!("{}", e),
+            }
         },
     );
 

@@ -3,7 +3,7 @@ use super::Xkcd;
 use image::io::Reader as ImageReader;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
-use std::io::Cursor;
+use std::{error, io::Cursor};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct XkcdJson {
@@ -20,24 +20,26 @@ struct XkcdJson {
     pub day: String,
 }
 
-pub fn get_current_xkcd() -> Xkcd {
+pub fn get_current_xkcd() -> Result<Xkcd, Box<dyn error::Error>> {
     let url = "https://xkcd.com/info.0.json";
-    let response = reqwest::blocking::get(url).unwrap();
+    let response = reqwest::blocking::get(url)?;
 
-    let xkcd_metadata = response.json::<XkcdJson>().unwrap();
+    let xkcd_metadata = response.json::<XkcdJson>()?;
+
+    let image = get_current_xkcd_image(xkcd_metadata.img)?;
 
     let xkcd = Xkcd {
         title: xkcd_metadata.title.into(),
-        image: get_current_xkcd_image(xkcd_metadata.img),
+        image,
         flavor_text: xkcd_metadata.alt.into(),
     };
 
-    xkcd
+    Ok(xkcd)
 }
 
-pub fn get_current_xkcd_image(url: String) -> Image {
+pub fn get_current_xkcd_image(url: String) -> Result<Image, reqwest::Error> {
     //TODO: Error handling, aka don't crash if not able to load image
-    let response = reqwest::blocking::get(url).expect("Failed to download XKCD image");
+    let response = reqwest::blocking::get(url)?;
     let image_data = response.bytes().expect("Failed to read image data");
 
     // Wrap the image data in a `Cursor` to allow reading from it
@@ -56,5 +58,5 @@ pub fn get_current_xkcd_image(url: String) -> Image {
         rgba_image.width(),
         rgba_image.height(),
     );
-    Image::from_rgba8(buffer)
+    Ok(Image::from_rgba8(buffer))
 }
