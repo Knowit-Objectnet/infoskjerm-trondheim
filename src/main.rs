@@ -7,9 +7,11 @@ use std::rc::Rc;
 
 use chrono::Local;
 use slint::{Timer, TimerMode};
+use crate::transportation::test_graph_ql;
 
 mod weather;
 mod xkcd;
+mod transportation;
 
 use crate::weather::*;
 use crate::xkcd::*;
@@ -20,6 +22,9 @@ use crate::xkcd::*;
 struct StaticAssets;
 
 fn main() -> Result<(), slint::PlatformError> {
+
+    test_graph_ql();
+
     let ui = MainWindow::new()?;
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();

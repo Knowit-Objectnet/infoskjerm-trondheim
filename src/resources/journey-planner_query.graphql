@@ -1,0 +1,34 @@
+query StopPlace($id: String!, $timeRange: Int, $numberOfDepartures: Int) {
+    stopPlace(id: $id) {
+        id
+        name
+        estimatedCalls(timeRange: $timeRange, numberOfDepartures: $numberOfDepartures) {
+            realtime
+            aimedArrivalTime
+            aimedDepartureTime
+            expectedArrivalTime
+            expectedDepartureTime
+            actualArrivalTime
+            actualDepartureTime
+            date
+            forBoarding
+            forAlighting
+            destinationDisplay {
+                frontText
+                via
+            }
+            serviceJourney {
+                directionType
+                publicCode
+                journeyPattern {
+                    line {
+                        id
+                        name
+                        transportMode
+                        publicCode
+                    }
+                }
+            }
+        }
+    }
+}

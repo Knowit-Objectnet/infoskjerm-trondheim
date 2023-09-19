@@ -10,10 +10,10 @@ build = "build.rs"
 chrono = "0.4.26"
 image = "0.24.7"
 reqwest = { version = "0.11.18", features = ["blocking", "json"] }
+graphql_client = { version = "0.13.0", features = ["reqwest-blocking"] }
 serde = { version = "1.0.183", features = ["derive"] }
 serde_json = "1.0.104"
 slint = "1.0.0"
-openssl = { version = "0.10", features = ["vendored"] }
 rust-embed = "6.8.1"
 
 
