@@ -2,6 +2,7 @@ use log::info;
 use rust_embed::RustEmbed;
 use slint::PlatformError;
 use ui::*;
+use crate::transportation::test_graph_ql;
 
 mod calendar;
 mod datetime;
@@ -9,6 +10,7 @@ mod food;
 mod forecast;
 mod selfie;
 mod xkcd;
+mod transportation;
 
 pub mod ui {
     slint::include_modules!();
@@ -22,6 +24,8 @@ struct StaticAssets;
 fn main() -> Result<(), PlatformError> {
     env_logger::init();
     info!("Starting up...");
+
+    test_graph_ql();
 
     let main_window = MainWindow::new().unwrap();
     forecast::setup(&main_window);
