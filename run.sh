@@ -17,4 +17,4 @@ while ! check_wifi; do
     sleep 5
 done
 
-/home/infoskjerm/bin/infoskjerm &
+/home/infoskjerm/bin/infoskjerm >> infoskjerm.log 2>&1 &&
