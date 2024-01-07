@@ -23,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install SSL-stuff
-      run: sudo apt install libssl-dev && sudo apt install pkg-config
+      run: sudo apt install libssl-dev && sudo apt install pkg-config && ldd --version
     - name: Install ARM Target
       run: rustup target add arm-unknown-linux-gnueabihf
     - name: Install Cross
