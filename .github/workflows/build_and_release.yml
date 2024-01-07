@@ -25,11 +25,11 @@ jobs:
     - name: Install SSL-stuff
       run: sudo apt install libssl-dev && sudo apt install pkg-config && ldd --version
     - name: Install ARM Target
-      run: rustup target add arm-unknown-linux-gnueabihf
+      run: rustup target add armv7-unknown-linux-gnueabihf
     - name: Install Cross
       run: cargo install cross
     - name: Build
-      run: cross build --release --target=arm-unknown-linux-gnueabihf
+      run: cross build --release --target=armv7-unknown-linux-gnueabihf
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -47,6 +47,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./target/arm-unknown-linux-gnueabihf/release/infoskjerm
+        asset_path: ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
         asset_name: infoskjerm
         asset_content_type: application/zip
