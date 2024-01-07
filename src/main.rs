@@ -6,6 +6,7 @@ extern crate chrono;
 use std::rc::Rc;
 
 use chrono::Local;
+use log::{error, info};
 use slint::{Timer, TimerMode};
 
 mod weather;
@@ -20,6 +21,9 @@ use crate::xkcd::*;
 struct StaticAssets;
 
 fn main() -> Result<(), slint::PlatformError> {
+    env_logger::init();
+    info!("Starting up...");
+
     let ui = MainWindow::new()?;
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
@@ -45,8 +49,13 @@ fn main() -> Result<(), slint::PlatformError> {
     );
 
     match get_current_xkcd() {
-        Ok(xkcd) => ui.set_xkcd(xkcd),
-        Err(e) => eprintln!("{}", e),
+        Ok(xkcd) => {
+            ui.set_xkcd(xkcd);
+            info!("Initial xkcd set")
+        }
+        Err(e) => {
+            error!("Error setting initial XKCD: {}", e)
+        }
     }
 
     xkcd_timer.start(
@@ -62,8 +71,11 @@ fn main() -> Result<(), slint::PlatformError> {
     );
 
     match get_forecast() {
-        Ok(forecasts) => ui.set_forecasts(Rc::new(forecasts).into()),
-        Err(e) => eprintln!("{}", e),
+        Ok(forecasts) => {
+            ui.set_forecasts(Rc::new(forecasts).into());
+            info!("Initial weather set")
+        }
+        Err(e) => error!("Error setting initial forecast{}", e),
     }
 
     weather_timer.start(

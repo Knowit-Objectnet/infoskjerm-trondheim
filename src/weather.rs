@@ -2,6 +2,7 @@ use std::error;
 
 use super::Forecast;
 use super::StaticAssets;
+use log::info;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
@@ -136,5 +137,6 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
         })
     }
 
+    info!("Loaded forecast new forecast");
     Ok(forecast_vector)
 }

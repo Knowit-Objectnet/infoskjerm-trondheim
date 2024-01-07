@@ -1,6 +1,7 @@
 use super::Xkcd;
 
 use image::io::Reader as ImageReader;
+use log::info;
 use serde::{Deserialize, Serialize};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
 use std::{error, io::Cursor};
@@ -33,6 +34,8 @@ pub fn get_current_xkcd() -> Result<Xkcd, Box<dyn error::Error>> {
         image,
         flavor_text: xkcd_metadata.alt.into(),
     };
+
+    info!("Loaded xkcd: {}", xkcd.title);
 
     Ok(xkcd)
 }

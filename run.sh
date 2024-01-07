@@ -1,6 +1,7 @@
 #!/bin/bash
 export DISPLAY=:0
 export SLINT_FULLSCREEN=1
+export RUST_LOG=info
 
 # Function to check Wi-Fi connection
 check_wifi() {
