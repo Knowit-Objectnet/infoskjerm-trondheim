@@ -18,4 +18,5 @@ while ! check_wifi; do
     sleep 5
 done
 
+unclutter -idle 0 &
 (/home/infoskjerm/bin/infoskjerm >> infoskjerm.log 2>&1) &
