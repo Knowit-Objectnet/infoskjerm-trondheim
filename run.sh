@@ -18,4 +18,4 @@ while ! check_wifi; do
     sleep 5
 done
 
-/home/infoskjerm/bin/infoskjerm >> infoskjerm.log 2>&1
+(/home/infoskjerm/bin/infoskjerm >> infoskjerm.log 2>&1) &
