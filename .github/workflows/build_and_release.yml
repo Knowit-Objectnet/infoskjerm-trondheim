@@ -7,10 +7,10 @@ on:
     - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
     inputs:
-      tags:
+      tag:
         description: 'Tag'
         required: true
-        type: boolean
+        default: 'v0.0.0'
 
 env:
   CARGO_TERM_COLOR: always
@@ -36,8 +36,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.event.inputs.tag || github.ref }}
+        release_name: Release ${{ github.event.inputs.tag || github.ref }}
         draft: false
         prerelease: false
     - name: Upload Release Asset
