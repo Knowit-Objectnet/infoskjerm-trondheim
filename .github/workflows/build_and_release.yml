@@ -8,8 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
+        type: boolean
         description: 'Dry Run'
         required: false
+        default: false
       tag:
         description: 'Tag'
         required: true
