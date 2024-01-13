@@ -2,9 +2,8 @@ name: Build and release
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    - 'v*' # Push events matching v*, i.e. v1.0, v20.15.10
   workflow_dispatch:
     inputs:
       dry_run:
@@ -17,24 +16,29 @@ on:
         required: true
         default: 'v0.0.0'
 
+run-name: ${{ github.event.inputs.dry_run == 'true' && 'dry-run' || github.event.inputs.tag || github.ref }}
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
+    
     - name: Install SSL-stuff
       run: sudo apt install libssl-dev && sudo apt install pkg-config && ldd --version
+
     - name: Install ARM Target
       run: rustup target add armv7-unknown-linux-gnueabihf
+
     - name: Install Cross
       run: cargo install cross
+
     - name: Build
       run: cross build --release --target=armv7-unknown-linux-gnueabihf
+
     - name: Create Release
       if: ${{ !github.event.inputs.dry_run }}
       id: create_release
@@ -46,6 +50,7 @@ jobs:
         release_name: Release ${{ github.event.inputs.tag || github.ref }}
         draft: false
         prerelease: false
+
     - name: Upload Release Asset
       if: ${{ !github.event.inputs.dry_run }}
       id: upload-release-asset 
