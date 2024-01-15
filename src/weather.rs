@@ -1,12 +1,13 @@
-use std::error;
 use std::thread;
 
 use super::Forecast;
 use super::StaticAssets;
-use log::info;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
+use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
+
+use log::{error, info};
 
 use crate::MainWindow;
 
@@ -43,21 +44,6 @@ struct Data {
 #[serde(rename_all = "camelCase")]
 struct Instant {
     details: InstantDetails,
-}
-
-pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
-    let window_weak = window.as_weak();
-
-    thread::spawn(move || {
-        tokio::runtime::Runtime::new()
-            .unwrap()
-            .block_on(weather_worker_loop(window_weak))
-    })
-}
-
-async fn weather_worker_loop(window: slint::Weak<MainWindow>) {
-    // do nothing
-    println!("Foo")
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -97,11 +83,22 @@ pub struct Details {
     #[serde(rename = "precipitation_amount")]
     pub precipitation_amount: f32,
 }
-pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
+
+pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
+    let window_weak = window.as_weak();
+
+    thread::spawn(move || {
+        tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(weather_worker_loop(window_weak))
+    })
+}
+
+async fn weather_worker_loop(window: Weak<MainWindow>) {
     let api_url =
         "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
 
-    let client = reqwest::blocking::Client::new();
+    let client = reqwest::Client::new();
     let mut headers = header::HeaderMap::new();
     headers.insert(
         header::USER_AGENT,
@@ -110,8 +107,16 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
         ),
     );
 
-    let response = client.get(api_url).headers(headers).send()?;
-    let forecast_data = response.json::<ForecastRaw>()?;
+    let response = client.get(api_url).headers(headers).send().await;
+
+    let forecast_data: ForecastRaw = match response {
+        Ok(res) => res.json().await.unwrap_or_default(),
+        Err(err) => {
+            error!("Failed to fetch weather data: {}", err);
+            ForecastRaw::default()
+        }
+    };
+
     let next_hours_of_forecasts = forecast_data.properties.timeseries[0..7].to_vec();
     let forecast_vector = VecModel::default();
 
@@ -128,8 +133,9 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
                 .into_owned(),
         };
 
-        let weather_icon =
-            image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)?.into_rgba8();
+        let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
+            .unwrap()
+            .into_rgba8();
 
         let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
             weather_icon.as_raw(),
@@ -139,7 +145,9 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
 
         let icon = Image::from_rgba8(buffer);
 
-        let datetime = DateTime::parse_from_rfc3339(f.time.as_str())?.with_timezone(&Utc);
+        let datetime = DateTime::parse_from_rfc3339(f.time.as_str())
+            .unwrap()
+            .with_timezone(&Utc);
         let local_datetime = datetime.with_timezone(&Local);
         let time = local_datetime.format("%H:%M").to_string().into();
 
@@ -152,9 +160,11 @@ pub fn get_forecast() -> Result<VecModel<Forecast>, Box<dyn error::Error>> {
             temp,
             icon,
             precipitation,
-        })
+        });
     }
+    display_forecast(window.clone(), forecast_vector);
+}
 
-    info!("Loaded forecast new forecast");
-    Ok(forecast_vector)
+fn display_forecast(window_weak: Weak<MainWindow>, forecasts: VecModel<Forecast>) {
+    print!("Foo")
 }

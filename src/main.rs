@@ -3,8 +3,6 @@ slint::include_modules!();
 
 extern crate chrono;
 
-use std::rc::Rc;
-
 use chrono::Local;
 use log::{error, info};
 use slint::{Timer, TimerMode};
@@ -12,8 +10,13 @@ use slint::{Timer, TimerMode};
 mod weather;
 mod xkcd;
 
-use crate::weather::*;
 use crate::xkcd::*;
+
+use ui::*;
+
+pub mod ui {
+    slint::include_modules!();
+}
 
 // we embed img folder into the compiled binary for simpler distribution
 #[derive(RustEmbed)]
@@ -24,17 +27,17 @@ fn main() -> Result<(), slint::PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    let ui = MainWindow::new().unwrap();
+    let main_window = MainWindow::new().unwrap();
 
-    let weather_join = weather::setup(&ui);
+    let weather_join = weather::setup(&main_window);
 
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
     let weather_timer = Timer::default();
 
-    let clock_handle = ui.as_weak();
-    let xkcd_handle = ui.as_weak();
-    let weather_handle = ui.as_weak();
+    let clock_handle = main_window.as_weak();
+    let xkcd_handle = main_window.as_weak();
+    let weather_handle = main_window.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
@@ -53,7 +56,7 @@ fn main() -> Result<(), slint::PlatformError> {
 
     match get_current_xkcd() {
         Ok(xkcd) => {
-            ui.set_xkcd(xkcd);
+            main_window.set_xkcd(xkcd);
             info!("Initial xkcd set")
         }
         Err(e) => {
@@ -73,25 +76,5 @@ fn main() -> Result<(), slint::PlatformError> {
         },
     );
 
-    match get_forecast() {
-        Ok(forecasts) => {
-            ui.set_forecasts(Rc::new(forecasts).into());
-            info!("Initial weather set")
-        }
-        Err(e) => error!("Error setting initial forecast{}", e),
-    }
-
-    weather_timer.start(
-        TimerMode::Repeated,
-        std::time::Duration::from_secs(900),
-        move || {
-            let ui = weather_handle.unwrap();
-            match get_forecast() {
-                Ok(forecasts) => ui.set_forecasts(Rc::new(forecasts).into()),
-                Err(e) => eprintln!("{}", e),
-            }
-        },
-    );
-
-    ui.run()
+    main_window.run()
 }
