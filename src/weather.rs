@@ -1,11 +1,14 @@
 use std::error;
+use std::thread;
 
 use super::Forecast;
 use super::StaticAssets;
 use log::info;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
-use slint::{Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
+use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
+
+use crate::MainWindow;
 
 use chrono::{DateTime, Local, Utc};
 
@@ -40,6 +43,21 @@ struct Data {
 #[serde(rename_all = "camelCase")]
 struct Instant {
     details: InstantDetails,
+}
+
+pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
+    let window_weak = window.as_weak();
+
+    thread::spawn(move || {
+        tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(weather_worker_loop(window_weak))
+    })
+}
+
+async fn weather_worker_loop(window: slint::Weak<MainWindow>) {
+    // do nothing
+    println!("Foo")
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]

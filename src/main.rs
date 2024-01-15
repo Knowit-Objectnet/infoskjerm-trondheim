@@ -24,7 +24,10 @@ fn main() -> Result<(), slint::PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    let ui = MainWindow::new()?;
+    let ui = MainWindow::new().unwrap();
+
+    let weather_join = weather::setup(&ui);
+
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
     let weather_timer = Timer::default();
