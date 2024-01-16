@@ -33,8 +33,7 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
-    let weather_timer = Timer::default();
-
+    
     let clock_handle = main_window.as_weak();
     let xkcd_handle = main_window.as_weak();
     let weather_handle = main_window.as_weak();
@@ -75,6 +74,6 @@ fn main() -> Result<(), slint::PlatformError> {
             }
         },
     );
-
+    
     main_window.run()
 }
