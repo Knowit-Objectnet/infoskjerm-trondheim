@@ -12,85 +12,7 @@ use log::{error, info};
 use chrono::{DateTime, Local, Utc};
 
 use crate::ui::*;
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct ForecastRaw {
-    properties: Properties,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Properties {
-    pub timeseries: Vec<Series>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Series {
-    time: String,
-    data: Data,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Data {
-    instant: Instant,
-    #[serde(rename = "next_1_hours")]
-    next_1_hours: Option<Next1Hours>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Instant {
-    details: InstantDetails,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct InstantDetails {
-    #[serde(rename = "air_pressure_at_sea_level")]
-    air_pressure_at_sea_level: f32,
-    #[serde(rename = "air_temperature")]
-    air_temperature: f32,
-    #[serde(rename = "cloud_area_fraction")]
-    cloud_area_fraction: f32,
-    #[serde(rename = "relative_humidity")]
-    relative_humidity: f32,
-    #[serde(rename = "wind_from_direction")]
-    wind_from_direction: f32,
-    #[serde(rename = "wind_speed")]
-    wind_speed: f32,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Next1Hours {
-    pub summary: Summary,
-    pub details: Details,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Summary {
-    #[serde(rename = "symbol_code")]
-    pub symbol_code: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Details {
-    #[serde(rename = "precipitation_amount")]
-    pub precipitation_amount: f32,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
-struct ForecastModel {
-    time: String,
-    temp: String,
-    icon_name: String,
-    precipitation: String,
-}
+mod models;
 
 pub fn setup(window: &MainWindow) {
     let window_weak = window.as_weak();
@@ -109,7 +31,7 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
     }
 }
 
-fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<ForecastModel>) {
+fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<models::ForecastModel>) {
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let vm: VecModel<Forecast> = VecModel::default();
