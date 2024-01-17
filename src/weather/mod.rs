@@ -87,11 +87,11 @@ async fn get_forecast() -> Vec<weather_models::ForecastModel> {
             .unwrap()
             .with_timezone(&Utc);
         let local_datetime = datetime.with_timezone(&Local);
-        let time = local_datetime.format("%H:%M").to_string().into();
+        let time = local_datetime.format("%H:%M").to_string();
 
-        let temp = std::format!("{:.1}", f.data.instant.details.air_temperature).into();
+        let temp = std::format!("{:.1}", f.data.instant.details.air_temperature);
 
-        let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount).into();
+        let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount);
 
         forecast_vector.push(weather_models::ForecastModel {
             time,

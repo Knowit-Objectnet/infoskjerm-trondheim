@@ -1,10 +1,10 @@
-use rust_embed::RustEmbed;
-
 extern crate chrono;
 
 use chrono::Local;
 use log::info;
-use slint::{Timer, TimerMode};
+use rust_embed::RustEmbed;
+use slint::*;
+use ui::*;
 
 mod weather;
 mod xkcd;
@@ -12,9 +12,6 @@ mod xkcd;
 pub mod ui {
     slint::include_modules!();
 }
-
-use slint::*;
-use ui::*;
 
 // we embed img folder into the compiled binary for simpler distribution
 #[derive(RustEmbed)]
