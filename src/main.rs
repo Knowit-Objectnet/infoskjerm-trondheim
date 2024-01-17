@@ -6,7 +6,7 @@ use chrono::Local;
 use log::{error, info};
 use slint::{Timer, TimerMode};
 
-pub mod weather;
+mod weather;
 mod xkcd;
 
 use crate::xkcd::*;
