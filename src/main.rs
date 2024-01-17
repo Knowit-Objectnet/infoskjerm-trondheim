@@ -1,5 +1,4 @@
 use rust_embed::RustEmbed;
-slint::include_modules!();
 
 extern crate chrono;
 
@@ -7,16 +6,17 @@ use chrono::Local;
 use log::{error, info};
 use slint::{Timer, TimerMode};
 
-mod weather;
+pub mod weather;
 mod xkcd;
 
 use crate::xkcd::*;
 
-use ui::*;
-
 pub mod ui {
     slint::include_modules!();
 }
+
+use slint::*;
+use ui::*;
 
 // we embed img folder into the compiled binary for simpler distribution
 #[derive(RustEmbed)]
@@ -27,16 +27,18 @@ fn main() -> Result<(), slint::PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    let main_window = MainWindow::new().unwrap();
+    let main_window = FooMainWindow::new().unwrap();
 
     let weather_join = weather::setup(&main_window);
 
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
-    
+
     let clock_handle = main_window.as_weak();
     let xkcd_handle = main_window.as_weak();
     let weather_handle = main_window.as_weak();
+
+    let handle_weak = main_window.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
@@ -44,7 +46,7 @@ fn main() -> Result<(), slint::PlatformError> {
         move || {
             let ui = clock_handle.unwrap();
             let now = Local::now();
-            let datestring = format!("{}", now.format("%H:%M:%S"));
+            let datestring = std::format!("{}", now.format("%H:%M:%S"));
             let date = now.format("%d").to_string().into();
             let month = now.format("%b").to_string().to_uppercase().into();
             ui.set_time(datestring.into());
@@ -74,6 +76,6 @@ fn main() -> Result<(), slint::PlatformError> {
             }
         },
     );
-    
+
     main_window.run()
 }

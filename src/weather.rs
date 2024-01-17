@@ -1,6 +1,6 @@
+use std::rc::Rc;
 use std::thread;
 
-use super::Forecast;
 use super::StaticAssets;
 use reqwest::header;
 use serde::{Deserialize, Serialize};
@@ -9,9 +9,9 @@ use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
 use log::{error, info};
 
-use crate::MainWindow;
-
 use chrono::{DateTime, Local, Utc};
+
+use crate::ui::*;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -84,7 +84,7 @@ pub struct Details {
     pub precipitation_amount: f32,
 }
 
-pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
+pub fn setup(window: &FooMainWindow) -> thread::JoinHandle<()> {
     let window_weak = window.as_weak();
 
     thread::spawn(move || {
@@ -94,7 +94,7 @@ pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
     })
 }
 
-async fn weather_worker_loop(window: Weak<MainWindow>) {
+async fn get_forecast() -> VecModel<Forecast> {
     let api_url =
         "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
 
@@ -124,7 +124,7 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
         let next_hour = f.data.next_1_hours.unwrap_or_default();
 
         let icon_name = next_hour.summary.symbol_code;
-        let icon_path = format!("weather/{}.png", icon_name);
+        let icon_path = std::format!("weather/{}.png", icon_name);
         let icon_data = match StaticAssets::get(&icon_path) {
             Some(icon_data) => icon_data.data.into_owned(),
             None => StaticAssets::get("not-found.png")
@@ -151,9 +151,9 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
         let local_datetime = datetime.with_timezone(&Local);
         let time = local_datetime.format("%H:%M").to_string().into();
 
-        let temp = format!("{:.1}", f.data.instant.details.air_temperature).into();
+        let temp = std::format!("{:.1}", f.data.instant.details.air_temperature).into();
 
-        let precipitation = format!("{:.1}", next_hour.details.precipitation_amount).into();
+        let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount).into();
 
         forecast_vector.push(Forecast {
             time,
@@ -162,9 +162,20 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
             precipitation,
         });
     }
+    forecast_vector
+}
+
+async fn weather_worker_loop(window: Weak<FooMainWindow>) {
+    let forecast_vector = get_forecast().await;
     display_forecast(window.clone(), forecast_vector);
 }
 
-fn display_forecast(window_weak: Weak<MainWindow>, forecasts: VecModel<Forecast>) {
-    print!("Foo")
+fn display_forecast(window_weak: Weak<FooMainWindow>, forecasts: VecModel<Forecast>) {
+    window_weak
+        .upgrade_in_event_loop(move |window: FooMainWindow| {
+            window
+                .global::<WeatherAdapter>()
+                .set_forecasts(Rc::new(forecasts).into());
+        })
+        .unwrap();
 }

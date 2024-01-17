@@ -2,18 +2,17 @@ import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
-import { WeatherWidget, Forecast } from "weatherwidget.slint";
+import { WeatherWidget, WeatherAdapter, Forecast } from "weatherwidget.slint";
 
-export component MainWindow inherits Window {
+export { WeatherAdapter, Forecast }
+
+export component FooMainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
     in property <string> month: "jan" ;
-    in property <[Forecast]> forecasts: [{
-        time: "12:00",
-        temp: "3.0",
-        icon: @image-url("../img/weather/fog.png"),
-        precipitation: "4.0"
-    }];
+    in property <string> foo: "bar";
+    
+    
 
     //TODO: refactor into custom struct
     in property <Xkcd> xkcd: {
@@ -34,8 +33,13 @@ export component MainWindow inherits Window {
     VerticalLayout{
         alignment: space-between;
 
-        WeatherWidget {
-            forecasts: forecasts;
+        WeatherWidget {}
+
+        Text {
+            color: whitesmoke;
+            horizontal-alignment: center;
+            font-size: 2.5rem;
+            text: foo;
         }
         
         XkcdWidget {
