@@ -27,7 +27,7 @@ fn main() -> Result<(), slint::PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    let main_window = FooMainWindow::new().unwrap();
+    let main_window = MainWindow::new().unwrap();
 
     let weather_join = weather::setup(&main_window);
 
