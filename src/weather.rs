@@ -92,25 +92,24 @@ struct ForecastModel {
     precipitation: String,
 }
 
-pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
+pub fn setup(window: &MainWindow) {
     let window_weak = window.as_weak();
-
     thread::spawn(move || {
         tokio::runtime::Runtime::new()
             .unwrap()
             .block_on(weather_worker_loop(window_weak))
-    })
+    });
 }
 
 async fn weather_worker_loop(window: Weak<MainWindow>) {
     loop {
         let forecast_vector = get_forecast().await;
-        display_forecast(window.clone(), forecast_vector);
+        display_forecast(&window, forecast_vector);
         tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
     }
 }
 
-fn display_forecast(window_weak: Weak<MainWindow>, forecasts: Vec<ForecastModel>) {
+fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<ForecastModel>) {
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let vm: VecModel<Forecast> = VecModel::default();
@@ -129,29 +128,6 @@ fn display_forecast(window_weak: Weak<MainWindow>, forecasts: Vec<ForecastModel>
             window.set_forecasts(Rc::new(vm).into());
         })
         .unwrap();
-}
-
-fn get_icon(icon_name: String) -> Image {
-    let icon_path = std::format!("weather/{}.png", icon_name);
-    let icon_data = match StaticAssets::get(&icon_path) {
-        Some(icon_data) => icon_data.data.into_owned(),
-        None => StaticAssets::get("not-found.png")
-            .unwrap()
-            .data
-            .into_owned(),
-    };
-
-    let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
-        .unwrap()
-        .into_rgba8();
-
-    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-        weather_icon.as_raw(),
-        weather_icon.width(),
-        weather_icon.height(),
-    );
-
-    Image::from_rgba8(buffer)
 }
 
 async fn get_forecast() -> Vec<ForecastModel> {
@@ -205,4 +181,27 @@ async fn get_forecast() -> Vec<ForecastModel> {
         });
     }
     forecast_vector
+}
+
+fn get_icon(icon_name: String) -> Image {
+    let icon_path = std::format!("weather/{}.png", icon_name);
+    let icon_data = match StaticAssets::get(&icon_path) {
+        Some(icon_data) => icon_data.data.into_owned(),
+        None => StaticAssets::get("not-found.png")
+            .unwrap()
+            .data
+            .into_owned(),
+    };
+
+    let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
+        .unwrap()
+        .into_rgba8();
+
+    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+        weather_icon.as_raw(),
+        weather_icon.width(),
+        weather_icon.height(),
+    );
+
+    Image::from_rgba8(buffer)
 }
