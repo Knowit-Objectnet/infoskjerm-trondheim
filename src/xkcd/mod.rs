@@ -1,13 +1,15 @@
-use super::Xkcd;
+use crate::ui::*;
 
 use image::io::Reader as ImageReader;
 use log::info;
 use serde::{Deserialize, Serialize};
-use slint::{Image, Rgba8Pixel, SharedPixelBuffer};
-use std::{error, io::Cursor};
+use slint::{Image, Rgba8Pixel, SharedPixelBuffer, Weak};
+use std::{error, io::Cursor, thread};
+
+const XKCD_URL: &str = "https://xkcd.com/info.0.json";
 
 #[derive(Debug, Deserialize, Serialize)]
-struct XkcdJson {
+pub struct XkcdJson {
     pub month: String,
     pub num: i64,
     pub link: String,
@@ -21,23 +23,47 @@ struct XkcdJson {
     pub day: String,
 }
 
-pub fn get_current_xkcd() -> Result<Xkcd, Box<dyn error::Error>> {
-    let url = "https://xkcd.com/info.0.json";
-    let response = reqwest::blocking::get(url)?;
+pub fn setup(window: &MainWindow) {
+    let window_weak = window.as_weak();
+    thread::spawn(move || {
+        tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(xkcd_worker_loop(window_weak))
+    });
+}
 
-    let xkcd_metadata = response.json::<XkcdJson>()?;
+async fn xkcd_worker_loop(window: Weak<MainWindow>) {
+    loop {
+        let xkcd = get_current_xkcd().await;
+        display_xkcd(&window, xkcd.unwrap());
+        tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+    }
+}
 
-    let image = get_current_xkcd_image(xkcd_metadata.img)?;
+fn display_xkcd(window_weak: &Weak<MainWindow>, xkcd_metadata: XkcdJson) {
+    window_weak
+        .upgrade_in_event_loop(move |window: MainWindow| {
+            let image = get_current_xkcd_image(xkcd_metadata.img).unwrap();
 
-    let xkcd = Xkcd {
-        title: xkcd_metadata.title.into(),
-        image,
-        flavor_text: xkcd_metadata.alt.into(),
-    };
+            let xkcd = Xkcd {
+                title: xkcd_metadata.title.into(),
+                image,
+                flavor_text: xkcd_metadata.alt.into(),
+            };
 
-    info!("Loaded xkcd: {}", xkcd.title);
+            window.set_xkcd(xkcd);
+        })
+        .unwrap();
+}
 
-    Ok(xkcd)
+pub async fn get_current_xkcd() -> Result<XkcdJson, Box<dyn error::Error>> {
+    let response = reqwest::get(XKCD_URL).await?;
+
+    let xkcd_metadata = response.json::<XkcdJson>().await?;
+
+    info!("Loaded xkcd: {}", xkcd_metadata.title);
+
+    Ok(xkcd_metadata)
 }
 
 pub fn get_current_xkcd_image(url: String) -> Result<Image, reqwest::Error> {
