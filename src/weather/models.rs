@@ -2,44 +2,44 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ForecastRaw {
-    properties: Properties,
+pub struct ForecastRaw {
+    pub properties: Properties,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct Properties {
+pub struct Properties {
     pub timeseries: Vec<Series>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct Series {
-    time: String,
-    data: Data,
+pub struct Series {
+    pub time: String,
+    pub data: Data,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct Data {
-    instant: Instant,
+pub struct Data {
+    pub instant: Instant,
     #[serde(rename = "next_1_hours")]
-    next_1_hours: Option<Next1Hours>,
+    pub next_1_hours: Option<Next1Hours>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct Instant {
-    details: InstantDetails,
+pub struct Instant {
+    pub details: InstantDetails,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct InstantDetails {
+pub struct InstantDetails {
     #[serde(rename = "air_pressure_at_sea_level")]
     air_pressure_at_sea_level: f32,
     #[serde(rename = "air_temperature")]
-    air_temperature: f32,
+    pub air_temperature: f32,
     #[serde(rename = "cloud_area_fraction")]
     cloud_area_fraction: f32,
     #[serde(rename = "relative_humidity")]

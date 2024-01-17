@@ -3,7 +3,6 @@ use std::thread;
 
 use super::StaticAssets;
 use reqwest::header;
-use serde::{Deserialize, Serialize};
 use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
@@ -52,7 +51,7 @@ fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<models::Forec
         .unwrap();
 }
 
-async fn get_forecast() -> Vec<ForecastModel> {
+async fn get_forecast() -> Vec<models::ForecastModel> {
     info! {"Fetching weather data... "}
 
     let api_url =
@@ -69,11 +68,11 @@ async fn get_forecast() -> Vec<ForecastModel> {
 
     let response = client.get(api_url).headers(headers).send().await;
 
-    let forecast_data: ForecastRaw = match response {
+    let forecast_data: models::ForecastRaw = match response {
         Ok(res) => res.json().await.unwrap_or_default(),
         Err(err) => {
             error!("Failed to fetch weather data: {}", err);
-            ForecastRaw::default()
+            models::ForecastRaw::default()
         }
     };
 
@@ -95,7 +94,7 @@ async fn get_forecast() -> Vec<ForecastModel> {
 
         let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount).into();
 
-        forecast_vector.push(ForecastModel {
+        forecast_vector.push(models::ForecastModel {
             time,
             temp,
             icon_name,
