@@ -4,6 +4,8 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
 
+export { Forecast }
+
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
@@ -14,8 +16,6 @@ export component MainWindow inherits Window {
         icon: @image-url("../img/weather/fog.png"),
         precipitation: "4.0"
     }];
-
-    //TODO: refactor into custom struct
     in property <Xkcd> xkcd: {
         title: "Lorem Ipsum",
         image: @image-url("../img/xkcd.png"),
@@ -28,15 +28,11 @@ export component MainWindow inherits Window {
     // height: 960px;
     background:  #030201;
     default-font-family: "sans";
-
-
     
     VerticalLayout{
         alignment: space-between;
 
-        WeatherWidget {
-            forecasts: forecasts;
-        }
+        WeatherWidget { forecasts: forecasts;}
         
         XkcdWidget {
             max-height: 30rem;

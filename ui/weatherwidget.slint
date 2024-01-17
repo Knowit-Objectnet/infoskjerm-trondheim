@@ -5,6 +5,7 @@ export struct Forecast {
     precipitation: string,
 }
 
+
 component WeatherLine {
     in property <Forecast> forecast;
     HorizontalLayout {
@@ -47,6 +48,7 @@ export component WeatherWidget {
             text: "Været i dag:";
             horizontal-alignment: center;
         }
+        
         for f in forecasts : WeatherLine {
            forecast: f;
         }
