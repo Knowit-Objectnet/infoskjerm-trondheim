@@ -2,6 +2,13 @@
 
 Infoskjerm for Trondheimkontoret, skrive i Rust, med Slint.
 
+![Screenshot](screenshot.png)
+
+## Implementert funksjonalitet
+* XKCD
+* Vær
+* Klokke og dato
+
 ## Idear til funksjonalitet
 * Busstider
 * Møteromsstatus
