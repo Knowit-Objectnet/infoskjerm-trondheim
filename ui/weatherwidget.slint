@@ -5,14 +5,6 @@ export struct Forecast {
     precipitation: string,
 }
 
-export global WeatherAdapter { 
-    in property <[Forecast]> forecasts: [{
-        time: "12:00",
-        temp: "3.0",
-        icon: @image-url("../img/weather/fog.png"),
-        precipitation: "4.0"
-    }];
-}
 
 component WeatherLine {
     in property <Forecast> forecast;
@@ -46,6 +38,7 @@ component WeatherLine {
 }
 
 export component WeatherWidget { 
+    in property <[Forecast]> forecasts;
     VerticalLayout {
         alignment: start;
         padding-top: 2rem;
@@ -56,7 +49,7 @@ export component WeatherWidget {
             horizontal-alignment: center;
         }
         
-        for f in WeatherAdapter.forecasts : WeatherLine {
+        for f in forecasts : WeatherLine {
            forecast: f;
         }
     }

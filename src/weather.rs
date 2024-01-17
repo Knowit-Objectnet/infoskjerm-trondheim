@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
-use log::error;
+use log::{error, info};
 
 use chrono::{DateTime, Local, Utc};
 
@@ -85,7 +85,7 @@ pub struct Details {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-struct ForecastFoo {
+struct ForecastModel {
     time: String,
     temp: String,
     icon_name: String,
@@ -102,8 +102,60 @@ pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
     })
 }
 
-async fn get_forecast() -> Vec<ForecastFoo> {
-    print! {"Fetching weather data... "}
+async fn weather_worker_loop(window: Weak<MainWindow>) {
+    loop {
+        let forecast_vector = get_forecast().await;
+        display_forecast(window.clone(), forecast_vector);
+        tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
+    }
+}
+
+fn display_forecast(window_weak: Weak<MainWindow>, forecasts: Vec<ForecastModel>) {
+    window_weak
+        .upgrade_in_event_loop(move |window: MainWindow| {
+            let vm: VecModel<Forecast> = VecModel::default();
+
+            for f in forecasts {
+                let icon = get_icon(f.icon_name);
+                let forecast = Forecast {
+                    time: f.time.to_owned().into(),
+                    temp: f.temp.to_owned().into(),
+                    icon,
+                    precipitation: f.precipitation.to_owned().into(),
+                };
+                vm.push(forecast);
+            }
+
+            window.set_forecasts(Rc::new(vm).into());
+        })
+        .unwrap();
+}
+
+fn get_icon(icon_name: String) -> Image {
+    let icon_path = std::format!("weather/{}.png", icon_name);
+    let icon_data = match StaticAssets::get(&icon_path) {
+        Some(icon_data) => icon_data.data.into_owned(),
+        None => StaticAssets::get("not-found.png")
+            .unwrap()
+            .data
+            .into_owned(),
+    };
+
+    let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
+        .unwrap()
+        .into_rgba8();
+
+    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+        weather_icon.as_raw(),
+        weather_icon.width(),
+        weather_icon.height(),
+    );
+
+    Image::from_rgba8(buffer)
+}
+
+async fn get_forecast() -> Vec<ForecastModel> {
+    info! {"Fetching weather data... "}
 
     let api_url =
         "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
@@ -145,7 +197,7 @@ async fn get_forecast() -> Vec<ForecastFoo> {
 
         let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount).into();
 
-        forecast_vector.push(ForecastFoo {
+        forecast_vector.push(ForecastModel {
             time,
             temp,
             icon_name,
@@ -153,58 +205,4 @@ async fn get_forecast() -> Vec<ForecastFoo> {
         });
     }
     forecast_vector
-}
-
-async fn weather_worker_loop(window: Weak<MainWindow>) {
-    for _ in 0..12 {
-        let forecast_vector = get_forecast().await;
-        display_forecast(window.clone(), forecast_vector);
-        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-    }
-}
-
-fn display_forecast(window_weak: Weak<MainWindow>, forecasts: Vec<ForecastFoo>) {
-    window_weak
-        .upgrade_in_event_loop(move |window: MainWindow| {
-            let vm: VecModel<Forecast> = VecModel::default();
-
-            for f in forecasts {
-                let icon = get_icon(f.icon_name);
-                let forecast = Forecast {
-                    time: f.time.to_owned().into(),
-                    temp: f.temp.to_owned().into(),
-                    icon,
-                    precipitation: f.precipitation.to_owned().into(),
-                };
-                vm.push(forecast);
-            }
-
-            window
-                .global::<WeatherAdapter>()
-                .set_forecasts(Rc::new(vm).into());
-        })
-        .unwrap();
-}
-
-fn get_icon(icon_name: String) -> Image {
-    let icon_path = std::format!("weather/{}.png", icon_name);
-    let icon_data = match StaticAssets::get(&icon_path) {
-        Some(icon_data) => icon_data.data.into_owned(),
-        None => StaticAssets::get("not-found.png")
-            .unwrap()
-            .data
-            .into_owned(),
-    };
-
-    let weather_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
-        .unwrap()
-        .into_rgba8();
-
-    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-        weather_icon.as_raw(),
-        weather_icon.width(),
-        weather_icon.height(),
-    );
-
-    Image::from_rgba8(buffer)
 }

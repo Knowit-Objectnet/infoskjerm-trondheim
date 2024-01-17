@@ -29,16 +29,13 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let main_window = MainWindow::new().unwrap();
 
-    let weather_join = weather::setup(&main_window);
+    weather::setup(&main_window);
 
     let clock_timer = Timer::default();
     let xkcd_timer = Timer::default();
 
     let clock_handle = main_window.as_weak();
     let xkcd_handle = main_window.as_weak();
-    let weather_handle = main_window.as_weak();
-
-    let handle_weak = main_window.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
