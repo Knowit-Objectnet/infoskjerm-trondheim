@@ -10,7 +10,6 @@ export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
     in property <string> month: "jan" ;
-    in property <string> foo: "bar";
     
     
 
@@ -34,13 +33,6 @@ export component MainWindow inherits Window {
         alignment: space-between;
 
         WeatherWidget {}
-
-        Text {
-            color: whitesmoke;
-            horizontal-alignment: center;
-            font-size: 2.5rem;
-            text: foo;
-        }
         
         XkcdWidget {
             max-height: 30rem;

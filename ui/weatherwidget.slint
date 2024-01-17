@@ -6,7 +6,6 @@ export struct Forecast {
 }
 
 export global WeatherAdapter { 
-    in property <string> foo: "bar";
     in property <[Forecast]> forecasts: [{
         time: "12:00",
         temp: "3.0",
@@ -56,11 +55,7 @@ export component WeatherWidget {
             text: "Været i dag:";
             horizontal-alignment: center;
         }
-        Text {
-            color: whitesmoke;
-            font-size: 2rem;
-            text: WeatherAdapter.foo;
-            horizontal-alignment: center;}
+        
         for f in WeatherAdapter.forecasts : WeatherLine {
            forecast: f;
         }
