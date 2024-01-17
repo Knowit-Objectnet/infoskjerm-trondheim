@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
-use log::{error, info};
+use log::error;
 
 use chrono::{DateTime, Local, Utc};
 
@@ -103,6 +103,8 @@ pub fn setup(window: &MainWindow) -> thread::JoinHandle<()> {
 }
 
 async fn get_forecast() -> Vec<ForecastFoo> {
+    print! {"Fetching weather data... "}
+
     let api_url =
         "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
 
@@ -154,8 +156,11 @@ async fn get_forecast() -> Vec<ForecastFoo> {
 }
 
 async fn weather_worker_loop(window: Weak<MainWindow>) {
-    let forecast_vector = get_forecast().await;
-    display_forecast(window.clone(), forecast_vector);
+    for _ in 0..12 {
+        let forecast_vector = get_forecast().await;
+        display_forecast(window.clone(), forecast_vector);
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    }
 }
 
 fn display_forecast(window_weak: Weak<MainWindow>, forecasts: Vec<ForecastFoo>) {
