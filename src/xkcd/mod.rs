@@ -36,7 +36,7 @@ async fn xkcd_worker_loop(window: Weak<MainWindow>) {
     loop {
         let xkcd = get_current_xkcd().await;
         display_xkcd(&window, xkcd.unwrap());
-        tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
     }
 }
 

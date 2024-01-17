@@ -3,13 +3,11 @@ use rust_embed::RustEmbed;
 extern crate chrono;
 
 use chrono::Local;
-use log::{error, info};
+use log::info;
 use slint::{Timer, TimerMode};
 
 mod weather;
 mod xkcd;
-
-use crate::xkcd::*;
 
 pub mod ui {
     slint::include_modules!();
@@ -33,10 +31,7 @@ fn main() -> Result<(), slint::PlatformError> {
     xkcd::setup(&main_window);
 
     let clock_timer = Timer::default();
-    //let xkcd_timer = Timer::default();
-
     let clock_handle = main_window.as_weak();
-    //let xkcd_handle = main_window.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
@@ -52,18 +47,6 @@ fn main() -> Result<(), slint::PlatformError> {
             ui.set_date(date);
         },
     );
-
-    // xkcd_timer.start(
-    //     TimerMode::Repeated,
-    //     std::time::Duration::from_secs(3600 * 2),
-    //     move || {
-    //         let ui = xkcd_handle.unwrap();
-    //         match get_current_xkcd() {
-    //             Ok(xkcd) => ui.set_xkcd(xkcd),
-    //             Err(e) => eprintln!("{}", e),
-    //         }
-    //     },
-    // );
 
     main_window.run()
 }
