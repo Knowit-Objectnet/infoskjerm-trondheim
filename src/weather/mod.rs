@@ -11,7 +11,11 @@ use log::{error, info};
 use chrono::{DateTime, Local, Utc};
 
 use crate::ui::*;
-mod models;
+mod weather_models;
+
+const API_URL: &str =
+    "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
+const USER_AGENT_STR: &str = "Knowit Infoskjerm - github.com/Knowit-Objectnet/infoskjerm-trondheim";
 
 pub fn setup(window: &MainWindow) {
     let window_weak = window.as_weak();
@@ -30,7 +34,7 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
     }
 }
 
-fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<models::ForecastModel>) {
+fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<weather_models::ForecastModel>) {
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let vm: VecModel<Forecast> = VecModel::default();
@@ -51,28 +55,23 @@ fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: Vec<models::Forec
         .unwrap();
 }
 
-async fn get_forecast() -> Vec<models::ForecastModel> {
+async fn get_forecast() -> Vec<weather_models::ForecastModel> {
     info! {"Fetching weather data... "}
-
-    let api_url =
-        "https://api.met.no/weatherapi/locationforecast/2.0/compact.json?lat=63.2549&lon=10.2342";
 
     let client = reqwest::Client::new();
     let mut headers = header::HeaderMap::new();
     headers.insert(
         header::USER_AGENT,
-        header::HeaderValue::from_static(
-            "Knowit Infoskjerm - https://github.com/Knowit-Objectnet/infoskjerm-trondheim",
-        ),
+        header::HeaderValue::from_static(USER_AGENT_STR),
     );
 
-    let response = client.get(api_url).headers(headers).send().await;
+    let response = client.get(API_URL).headers(headers).send().await;
 
-    let forecast_data: models::ForecastRaw = match response {
+    let forecast_data: weather_models::ForecastRaw = match response {
         Ok(res) => res.json().await.unwrap_or_default(),
         Err(err) => {
             error!("Failed to fetch weather data: {}", err);
-            models::ForecastRaw::default()
+            weather_models::ForecastRaw::default()
         }
     };
 
@@ -94,7 +93,7 @@ async fn get_forecast() -> Vec<models::ForecastModel> {
 
         let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount).into();
 
-        forecast_vector.push(models::ForecastModel {
+        forecast_vector.push(weather_models::ForecastModel {
             time,
             temp,
             icon_name,
