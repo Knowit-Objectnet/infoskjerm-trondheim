@@ -1,7 +1,7 @@
 use std::rc::Rc;
 use std::thread;
 
-use self::weather_models::{ForecastRaw, ForecastModel, Series};
+use self::weather_models::{ForecastModel, ForecastRaw, Series};
 
 use super::StaticAssets;
 use reqwest::header;
@@ -34,7 +34,13 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
     }
 }
 
-fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: (Vec<weather_models::ForecastModel>, Vec<weather_models::ForecastModel>)) {
+fn display_forecast(
+    window_weak: &Weak<MainWindow>,
+    forecasts: (
+        Vec<weather_models::ForecastModel>,
+        Vec<weather_models::ForecastModel>,
+    ),
+) {
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let today_forecast: VecModel<Forecast> = VecModel::default();
@@ -68,7 +74,10 @@ fn display_forecast(window_weak: &Weak<MainWindow>, forecasts: (Vec<weather_mode
         .unwrap();
 }
 
-async fn get_forecasts() -> (Vec<weather_models::ForecastModel>, Vec<weather_models::ForecastModel>) {
+async fn get_forecasts() -> (
+    Vec<weather_models::ForecastModel>,
+    Vec<weather_models::ForecastModel>,
+) {
     info! {"Fetching weather data... "}
 
     let client = reqwest::Client::new();
@@ -92,7 +101,6 @@ async fn get_forecasts() -> (Vec<weather_models::ForecastModel>, Vec<weather_mod
     let tomorrow_forecasts = get_tomorrows_forecasts(&forecast_data);
 
     (next_hours_of_forecasts, tomorrow_forecasts)
-   
 }
 
 fn get_next_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
@@ -101,12 +109,18 @@ fn get_next_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
 }
 
 fn get_tomorrows_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
-    let desired_times = vec!["06:00", "07:00", "08:00", "09:00", "15:00", "16:00", "17:00"];
-    let tomorrows_forecast_times = forecast_data.properties.timeseries.iter()
+    let desired_times = vec![
+        "06:00", "07:00", "08:00", "09:00", "15:00", "16:00", "17:00",
+    ];
+    let tomorrows_forecast_times = forecast_data
+        .properties
+        .timeseries
+        .iter()
         .filter(|f| {
             let timestring = f.time.format("%H:%M").to_string();
             let timestr = timestring.as_str();
-            let is_tomorrow = f.time.date_naive() ==  chrono::Local::now().date_naive() + chrono::Duration::days(1);
+            let is_tomorrow = f.time.date_naive()
+                == chrono::Local::now().date_naive() + chrono::Duration::days(1);
             desired_times.contains(&timestr) && is_tomorrow
         })
         .cloned()
