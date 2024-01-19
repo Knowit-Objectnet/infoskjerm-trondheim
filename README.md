@@ -15,3 +15,4 @@ Infoskjerm for Trondheimkontoret, skrive i [Rust](https://www.rust-lang.org/), m
 * Tracking av wolt/foodora
 * Aktivitetskalender
 * Andre kule ting?
+* AI assistent: For *GPT med data og kontekst, dato, kalender, vær etc etc og be den gi råd for morgendagen eller lignende.
