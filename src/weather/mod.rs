@@ -5,7 +5,6 @@ use self::weather_models::{ForecastRaw, ForecastModel, Series};
 
 use super::StaticAssets;
 use reqwest::header;
-use serde_json::map;
 use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
