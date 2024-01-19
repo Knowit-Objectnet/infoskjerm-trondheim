@@ -1,6 +1,6 @@
 # Infoskjerm for Trondheimkontoret
 
-Infoskjerm for Trondheimkontoret, skrive i Rust, med Slint.
+Infoskjerm for Trondheimkontoret, skrive i [Rust](https://www.rust-lang.org/), med [Slint](https://slint.dev/).
 
 ![Screenshot](screenshot.png)
 

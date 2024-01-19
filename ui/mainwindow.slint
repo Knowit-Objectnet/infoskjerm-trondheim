@@ -18,14 +18,13 @@ export component MainWindow inherits Window {
     }];
     in property <Xkcd> xkcd: {
         title: "Lorem Ipsum",
-        image: @image-url("../img/xkcd.png"),
-        flavor_text: "Dolor sit amet"
+        image: @image-url("../img/xkcd2.png"),
+        flavor_text: "Dolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit amet"
     };
 
     title: "Infoskjerm";
-    //todo: set these programtically
-    // width: 540px;
-    // height: 960px;
+    //width: 540px;
+    //height: 960px;
     background:  #030201;
     default-font-family: "sans";
     
@@ -37,9 +36,9 @@ export component MainWindow inherits Window {
         XkcdWidget {
             max-height: 30rem;
             xkcd: xkcd;
-            }
+        }
 
-        HorizontalBox {
+        HorizontalBox   {
             alignment: space-between;
             VerticalLayout {
                 alignment: end;
@@ -66,7 +65,7 @@ export component MainWindow inherits Window {
                 font-size: 4rem;
                 text: time;
             }
-    }
+        }
         
     }
 }

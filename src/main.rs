@@ -3,7 +3,7 @@ extern crate chrono;
 use chrono::Local;
 use log::info;
 use rust_embed::RustEmbed;
-use slint::*;
+use slint::{PlatformError, Timer, TimerMode};
 use ui::*;
 
 mod weather;
@@ -18,7 +18,7 @@ pub mod ui {
 #[folder = "img/"]
 struct StaticAssets;
 
-fn main() -> Result<(), slint::PlatformError> {
+fn main() -> Result<(), PlatformError> {
     env_logger::init();
     info!("Starting up...");
 

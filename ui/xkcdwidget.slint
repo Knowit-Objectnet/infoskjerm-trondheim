@@ -8,9 +8,10 @@ export struct Xkcd {
 
 export component XkcdWidget {
     in property <Xkcd> xkcd ;
-        VerticalBox {
+        VerticalLayout {
             spacing: 0;
-            alignment: start;
+            width: 75%;
+
             Image {
                 source: xkcd.image;
             }
@@ -25,6 +26,7 @@ export component XkcdWidget {
                 horizontal-alignment: center;
                 color: whitesmoke;
                 text: xkcd.flavor-text;
+
             }
         }
  }
