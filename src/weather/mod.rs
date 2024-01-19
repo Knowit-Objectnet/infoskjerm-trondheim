@@ -8,7 +8,7 @@ use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
 use log::{error, info};
 
-use chrono::{DateTime, Local, Utc};
+use chrono::Local;
 
 use crate::ui::*;
 mod weather_models;
@@ -83,10 +83,7 @@ async fn get_forecast() -> Vec<weather_models::ForecastModel> {
 
         let icon_name = next_hour.summary.symbol_code;
 
-        let datetime = DateTime::parse_from_rfc3339(f.time.as_str())
-            .unwrap()
-            .with_timezone(&Utc);
-        let local_datetime = datetime.with_timezone(&Local);
+        let local_datetime = f.time.with_timezone(&Local);
         let time = local_datetime.format("%H:%M").to_string();
 
         let temp = std::format!("{:.1}", f.data.instant.details.air_temperature);
