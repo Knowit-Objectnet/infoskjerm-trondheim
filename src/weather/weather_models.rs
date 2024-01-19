@@ -1,6 +1,5 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,8 +16,7 @@ pub struct Properties {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Series {
-    
-    pub time: DateTime<Utc>,
+    pub time: DateTime<Local>,
     pub data: Data,
 }
 
