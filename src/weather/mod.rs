@@ -1,10 +1,11 @@
 use std::rc::Rc;
 use std::thread;
 
-use self::weather_models::{ForecastRaw, ForecastModel};
+use self::weather_models::{ForecastRaw, ForecastModel, Series};
 
 use super::StaticAssets;
 use reqwest::header;
+use serde_json::map;
 use slint::Weak;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, VecModel};
 
@@ -97,31 +98,11 @@ async fn get_forecasts() -> (Vec<weather_models::ForecastModel>, Vec<weather_mod
 
 fn get_next_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
     let next_hours_of_forecasts = forecast_data.properties.timeseries[0..7].to_vec();
-    let mut forecast_vector = Vec::default();
-
-    for f in next_hours_of_forecasts {
-        let time = f.time.format("%H:%M").to_string();
-
-        let temp = std::format!("{:.1}", f.data.instant.details.air_temperature);
-
-        let next_hour = f.data.next_1_hours.unwrap_or_default();
-        let icon_name = next_hour.summary.symbol_code;
-        let precipitation = std::format!("{:.1}", next_hour.details.precipitation_amount);
-
-        forecast_vector.push(weather_models::ForecastModel {
-            time,
-            temp,
-            icon_name,
-            precipitation,
-        });
-    }
-    forecast_vector
-
+    map_to_forecast_model(next_hours_of_forecasts)
 }
 
 fn get_tomorrows_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
-    let desired_times = vec!["06:00", "07:00", "08:00", "09:00", "15:00", "16:00", "17:00", "18:00"];
-
+    let desired_times = vec!["06:00", "07:00", "08:00", "09:00", "15:00", "16:00", "17:00"];
     let tomorrows_forecast_times = forecast_data.properties.timeseries.iter()
         .filter(|f| {
             let timestring = f.time.format("%H:%M").to_string();
@@ -132,9 +113,13 @@ fn get_tomorrows_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
         .cloned()
         .collect::<Vec<_>>();
 
+    map_to_forecast_model(tomorrows_forecast_times)
+}
+
+fn map_to_forecast_model(forecast_series: Vec<Series>) -> Vec<ForecastModel> {
     let mut forecast_vector = Vec::default();
 
-    for f in tomorrows_forecast_times {
+    for f in forecast_series {
         let time = f.time.format("%H:%M").to_string();
 
         let temp = std::format!("{:.1}", f.data.instant.details.air_temperature);
@@ -151,7 +136,6 @@ fn get_tomorrows_forecasts(forecast_data: &ForecastRaw) -> Vec<ForecastModel> {
         });
     }
     forecast_vector
-
 }
 
 fn get_icon(icon_name: String) -> Image {
