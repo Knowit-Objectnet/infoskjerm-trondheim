@@ -77,12 +77,12 @@ pub async fn get_current_xkcd_image(url: String) -> Result<SharedPixelBuffer<Rgb
     // Wrap the image data in a `Cursor` to allow reading from it
     let cursor = Cursor::new(image_data.as_ref());
 
-    // Decode the image into a `RgbaImage` from the `image` crate
     let dynamic_image = ImageReader::new(cursor)
         .with_guessed_format()
         .unwrap()
         .decode()
         .unwrap();
+    
     let rgba_image = dynamic_image.into_rgba8();
 
     let buffer: SharedPixelBuffer<Rgba8Pixel> = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
