@@ -7,7 +7,7 @@ build = "build.rs"
 [dependencies]
 chrono = {version = "0.4.26", features = ["serde"] }
 image = "0.24.7"
-reqwest = { version = "0.11.18", features = ["blocking", "json"] }
+reqwest = { version = "0.11.23", features = ["json"] }
 serde = { version = "1.0.183", features = ["derive"] }
 serde_json = "1.0.104"
 serde_with = "3.4.0"
@@ -15,7 +15,7 @@ slint = "1.3.2"
 rust-embed = "6.8.1"
 log = "0.4.20"
 env_logger = "0.10.1"
-tokio = "1.35.1"
+tokio = { version = "1.35.1", features = ["rt-multi-thread"] }
 
 
 # Vendored OpenSSL seems to be required for building on Linux on GHA, but not for Windows or Mac. Maybe this can be fixed some other way

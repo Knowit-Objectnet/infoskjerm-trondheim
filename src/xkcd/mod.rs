@@ -35,15 +35,18 @@ pub fn setup(window: &MainWindow) {
 async fn xkcd_worker_loop(window: Weak<MainWindow>) {
     loop {
         let xkcd = get_current_xkcd().await;
-        display_xkcd(&window, xkcd.unwrap());
+        display_xkcd(&window, xkcd.unwrap()).await;
         tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
     }
 }
 
-fn display_xkcd(window_weak: &Weak<MainWindow>, xkcd_metadata: XkcdJson) {
+async fn display_xkcd(window_weak: &Weak<MainWindow>, xkcd_metadata: XkcdJson) {
+
+    let img_shared_pixel_buffer = get_current_xkcd_image(xkcd_metadata.img).await;
+
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
-            let image = get_current_xkcd_image(xkcd_metadata.img).unwrap();
+            let image = Image::from_rgba8(img_shared_pixel_buffer.unwrap());
 
             let xkcd = Xkcd {
                 title: xkcd_metadata.title.into(),
@@ -66,10 +69,10 @@ pub async fn get_current_xkcd() -> Result<XkcdJson, Box<dyn error::Error>> {
     Ok(xkcd_metadata)
 }
 
-pub fn get_current_xkcd_image(url: String) -> Result<Image, reqwest::Error> {
+pub async fn get_current_xkcd_image(url: String) -> Result<SharedPixelBuffer<Rgba8Pixel>, reqwest::Error> {
     //TODO: Error handling, aka don't crash if not able to load image
-    let response = reqwest::blocking::get(url)?;
-    let image_data = response.bytes().expect("Failed to read image data");
+    let response = reqwest::get(url).await?;
+    let image_data = response.bytes().await.expect("Failed to read image data");
 
     // Wrap the image data in a `Cursor` to allow reading from it
     let cursor = Cursor::new(image_data.as_ref());
@@ -82,10 +85,10 @@ pub fn get_current_xkcd_image(url: String) -> Result<Image, reqwest::Error> {
         .unwrap();
     let rgba_image = dynamic_image.into_rgba8();
 
-    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+    let buffer: SharedPixelBuffer<Rgba8Pixel> = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
         rgba_image.as_raw(),
         rgba_image.width(),
         rgba_image.height(),
     );
-    Ok(Image::from_rgba8(buffer))
+    Ok(buffer)
 }
