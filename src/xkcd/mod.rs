@@ -42,6 +42,7 @@ async fn xkcd_worker_loop(window: Weak<MainWindow>) {
 
 async fn display_xkcd(window_weak: &Weak<MainWindow>, xkcd_metadata: XkcdJson) {
 
+    // slint::Image is not thread safe (Send), see https://slint.dev/releases/1.1.0/docs/rust/slint/struct.Image#sending-image-to-a-thread
     let img_shared_pixel_buffer = get_current_xkcd_image(xkcd_metadata.img).await;
 
     window_weak
@@ -82,7 +83,7 @@ pub async fn get_current_xkcd_image(url: String) -> Result<SharedPixelBuffer<Rgb
         .unwrap()
         .decode()
         .unwrap();
-    
+
     let rgba_image = dynamic_image.into_rgba8();
 
     let buffer: SharedPixelBuffer<Rgba8Pixel> = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
