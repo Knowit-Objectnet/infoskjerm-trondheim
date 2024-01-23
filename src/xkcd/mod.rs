@@ -36,12 +36,11 @@ async fn xkcd_worker_loop(window: Weak<MainWindow>) {
     loop {
         let xkcd = get_current_xkcd().await;
         display_xkcd(&window, xkcd.unwrap()).await;
-        tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(60 * 60)).await;
     }
 }
 
 async fn display_xkcd(window_weak: &Weak<MainWindow>, xkcd_metadata: XkcdJson) {
-
     // slint::Image is not thread safe (Send), see https://slint.dev/releases/1.1.0/docs/rust/slint/struct.Image#sending-image-to-a-thread
     let img_shared_pixel_buffer = get_current_xkcd_image(xkcd_metadata.img).await;
 
@@ -70,7 +69,9 @@ pub async fn get_current_xkcd() -> Result<XkcdJson, Box<dyn error::Error>> {
     Ok(xkcd_metadata)
 }
 
-pub async fn get_current_xkcd_image(url: String) -> Result<SharedPixelBuffer<Rgba8Pixel>, reqwest::Error> {
+pub async fn get_current_xkcd_image(
+    url: String,
+) -> Result<SharedPixelBuffer<Rgba8Pixel>, reqwest::Error> {
     //TODO: Error handling, aka don't crash if not able to load image
     let response = reqwest::get(url).await?;
     let image_data = response.bytes().await.expect("Failed to read image data");
