@@ -26,12 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Install SSL-stuff
-      run: sudo apt install libssl-dev && sudo apt install pkg-config && ldd --version
-
-    - name: Install ARM Target
-      run: rustup target add armv7-unknown-linux-gnueabihf
 
     - name: Install Cross
       run: cargo install cross
