@@ -1,0 +1,24 @@
+{
+  "status": "delivered",
+  "preorder_status": "confirmed",
+  "from_location": {
+    "coordinates": {
+      "lat": 63.4300976,
+      "lon": 10.3914648
+    },
+    "name": {
+      "en": "S'wich"
+    }
+  },
+  "to_location": {
+    "coordinates": {
+      "lat": 63.43052324733846,
+      "lon": 10.38686279207468
+    }
+  },
+  "couriers": [],
+  "pre_estimate": "15-25",
+  "pickup_eta": "2024-02-08T10:30:23+00:00",
+  "requested_dropoff_time": "2024-02-08T10:45:00+00:00",
+  "refresh_in_seconds": 0
+}

@@ -1,0 +1,35 @@
+{
+  "status": "production",
+  "preorder_status": "confirmed",
+  "from_location": {
+    "coordinates": {
+      "lat": 63.4300976,
+      "lon": 10.3914648
+    },
+    "name": {
+      "en": "S'wich"
+    }
+  },
+  "to_location": {
+    "coordinates": {
+      "lat": 63.43052324733846,
+      "lon": 10.38686279207468
+    }
+  },
+  "couriers": [
+    {
+      "id": "a13d1d2e309ab6135a62fec20094c8c81d239eb682d13c642e9070ddc0ef1e85",
+      "coordinates": {
+        "lat": 63.430561434206744,
+        "lon": 10.391513881741393
+      },
+      "vehicle_type": "car",
+      "is_delivering": true
+    }
+  ],
+  "pre_estimate": "15-25",
+  "delivery_eta": "2024-02-08T10:42:21.661000+00:00",
+  "pickup_eta": "2024-02-08T10:30:23+00:00",
+  "requested_dropoff_time": "2024-02-08T10:45:00+00:00",
+  "refresh_in_seconds": 5
+}
