@@ -27,7 +27,7 @@ fn main() -> Result<(), PlatformError> {
 
     weather::setup(&main_window);
     xkcd::setup(&main_window);
-    food::setup();
+    food::setup(&main_window);
 
     let clock_timer = Timer::default();
     let clock_handle = main_window.as_weak();

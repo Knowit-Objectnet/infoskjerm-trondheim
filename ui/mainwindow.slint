@@ -3,6 +3,7 @@ import { Button, VerticalBox } from "std-widgets.slint";
 import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
+import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -26,6 +27,13 @@ export component MainWindow inherits Window {
         flavor_text: "Dolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit amet"
     };
 
+    in property <FoodTracking> foodTracking: {
+        active: true,
+        resturant_name: "McDonalds",
+        minutes_remaining: "5",
+    
+    };
+
     title: "Infoskjerm";
     //width: 540px;
     //height: 960px;
@@ -36,7 +44,12 @@ export component MainWindow inherits Window {
         alignment: space-between;
 
         WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
-        
+
+        FoodTrackerWidget {
+            visible: foodTracking.active;
+            tracking: foodTracking;
+        }
+
         XkcdWidget {
             max-height: 30rem;
             xkcd: xkcd;
