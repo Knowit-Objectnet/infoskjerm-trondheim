@@ -10,7 +10,7 @@ Infoskjerm for Trondheimkontoret, skrive i [Rust](https://www.rust-lang.org/), m
 
     <sub>*[Rust Analyzer](https://rust-analyzer.github.io/manual.html) og [Slint plugin](https://slint.dev/get-started#integrate-with-ides) er også støtta av andre editors.</sub>
 
-Kildekoden ligg i [src-mappa](./src). Undermapper med ein `mod.rs-fil` er moduler for ulik funksjonalitet.
+Kildekoden ligg i [src-mappa](./src). `main.rs` inneheld entrypoint for applikasjonen. Undermapper med ein `mod.rs-fil` er moduler for ulik funksjonalitet.
 
 
 GUIet er laga med DSL'en Slint, og ligg i ui-mappa. [mainwindow.slint](./ui/mainwindow.slint) eksponerar `in properties` som blir tilgjengelige fra Rust-koden med setters.   F.eks:  
