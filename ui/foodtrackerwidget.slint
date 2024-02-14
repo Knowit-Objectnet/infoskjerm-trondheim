@@ -1,0 +1,13 @@
+export struct FoodTracking {
+    resturant_name: string,
+    minutes_remaining: string,
+    active: bool,
+}
+
+export component FoodTrackerWidget{
+    in property <FoodTracking> tracking;
+    Text {
+        font-size: 4rem;
+        text: "🍔🍟🍕Mat fra " + tracking.resturant_name + " kommer om " + tracking.minutes_remaining + " minutter! 🍕🍟🍔";
+    }
+}

@@ -6,6 +6,7 @@ use rust_embed::RustEmbed;
 use slint::{PlatformError, Timer, TimerMode};
 use ui::*;
 
+mod food;
 mod weather;
 mod xkcd;
 
@@ -26,6 +27,7 @@ fn main() -> Result<(), PlatformError> {
 
     weather::setup(&main_window);
     xkcd::setup(&main_window);
+    food::setup(&main_window);
 
     let clock_timer = Timer::default();
     let clock_handle = main_window.as_weak();
