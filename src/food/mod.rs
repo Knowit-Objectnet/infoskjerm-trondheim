@@ -54,7 +54,7 @@ async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
                     FoodTracking {
                         resturant_name: tracking_response.from_location.name.en.into(),
                         minutes_remaining: remaining_time.to_string().into(),
-                        active: remaining_time > 0,
+                        active: tracking_response.status != "delivered",
                     }
                 }
                 Err(e) => {
