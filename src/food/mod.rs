@@ -29,6 +29,8 @@ pub fn setup(main_window: &MainWindow) {
 
 async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
     let mut current_url: Option<Url> = None;
+    let mut current_tracking = FoodTracking::default();
+
     loop {
         match rx.try_recv() {
             Ok(tracking_url) => {
@@ -38,47 +40,36 @@ async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
             }
             Err(TryRecvError::Empty) => (),
             Err(TryRecvError::Disconnected) => {
-                error!("Food tracking channel disconnected. Panicing...");
-                panic!();
+                error!("Food tracking channel disconnected.");
             }
         }
 
-        let food_tracking = track_food(&current_url).await;
-        // If food_tracking is None, we either have no url or the tracking is done.
-        // Default FoodTracking is empty and hidden in the UI.
-        let food_tracking = food_tracking.unwrap_or_else(|| FoodTracking::default());
-        display_tracking(&window, food_tracking);
-        //TODO: Adjust timeout, maybe dynamic
+        if let Some(url) = &current_url {
+            let tracking_response = get_tracking_data(&url).await;
+
+            current_tracking = match tracking_response {
+                Ok(tracking_response) => {
+                    let remaining_time =
+                        ((tracking_response.delivery_eta.unwrap()) - Local::now()).num_minutes();
+                    FoodTracking {
+                        resturant_name: tracking_response.from_location.name.en.into(),
+                        minutes_remaining: remaining_time.to_string().into(),
+                        active: remaining_time > 0,
+                    }
+                }
+                Err(e) => {
+                    error!("Error getting tracking data: {}", e);
+                    // Reset URL as to not spam the API
+                    current_url = None;
+                    // Default is hidden in UI
+                    FoodTracking::default()
+                }
+            }
+        }
+
+        display_tracking(&window, current_tracking.clone());
+        //TODO: Adjust timeout, maybe dynamic based on refresh_in_seconds
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-    }
-}
-
-async fn track_food(url: &Option<Url>) -> Option<FoodTracking> {
-    let tracking_url = match url {
-        Some(url) => url,
-        // No URL, nothing to track.
-        None => return None,
-    };
-
-    let food_tracking = get_tracking_data(&tracking_url).await;
-
-    match food_tracking {
-        Ok(tracking_data) => {
-            //TODO: maybe show status before tracking ETA is present?
-            if tracking_data.status == "delivered" || tracking_data.delivery_eta.is_none() {
-                return None;
-            }
-            let remaining_time =
-                ((tracking_data.delivery_eta.unwrap()) - Local::now()).num_minutes();
-            Some(FoodTracking {
-                active: true,
-                minutes_remaining: remaining_time.to_string().into(),
-                resturant_name: tracking_data.from_location.name.en.into(),
-            })
-        }
-
-        //TODO: Log error
-        Err(_e) => None,
     }
 }
 

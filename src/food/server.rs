@@ -4,15 +4,27 @@ use reqwest::Url;
 use serde::Deserialize;
 use tide::Request;
 
-const WOLT_TRACKING_URL: &str =
-    "https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/";
+// const WOLT_TRACKING_URL: &str =
+//     "https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/";
+
+const WOLT_TRACKING_URL: &str = "http://localhost:9000/";
 
 pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
     let mut app = tide::new();
+    let food_html = include_str!("index.html");
+
+    app.at("/food").get(move |_| async move {
+        let response = tide::Response::builder(200)
+            .content_type(tide::http::mime::HTML)
+            .body(food_html)
+            .build();
+        Ok(response)
+    });
+
     app.at("/tracking")
         .post(move |req| start_tracking(tx.clone(), req));
-    app.at("/food").serve_file("src/food/index.html")?;
-    app.listen("127.0.0.1:1337").await?;
+
+    app.listen("0.0.0.0:1337").await?;
     Ok(())
 }
 
