@@ -4,10 +4,8 @@ use reqwest::Url;
 use serde::Deserialize;
 use tide::Request;
 
-// const WOLT_TRACKING_URL: &str =
-//     "https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/";
-
-const WOLT_TRACKING_URL: &str = "http://localhost:9000/";
+const WOLT_TRACKING_URL: &str =
+    "https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/";
 
 pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
     let mut app = tide::new();

@@ -5,7 +5,7 @@ use crate::ui::*;
 use chrono::Local;
 use log::{error, info};
 use reqwest::Url;
-use slint::Weak;
+use slint::{SharedString, Weak};
 use std::sync::mpsc::{self, Receiver, TryRecvError};
 use std::thread;
 use tokio::runtime::Runtime;
@@ -28,13 +28,12 @@ pub fn setup(main_window: &MainWindow) {
 }
 
 async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
-    let mut current_url: Option<Url> = None;
+    let mut current_url = None;
     let mut current_tracking = FoodTracking::default();
 
     loop {
         match rx.try_recv() {
             Ok(tracking_url) => {
-                //TODO: Use logging instead of println
                 info!("Got new tracking url: {}", tracking_url);
                 current_url = Some(tracking_url);
             }
@@ -49,12 +48,19 @@ async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
 
             current_tracking = match tracking_response {
                 Ok(tracking_response) => {
-                    let remaining_time =
-                        ((tracking_response.delivery_eta.unwrap()) - Local::now()).num_minutes();
+                    let minutes_remaining: SharedString = match tracking_response.delivery_eta {
+                        Some(eta) => ((eta) - Local::now()).num_minutes().to_string().into(),
+                        None => "ukjent antall".into(),
+                    };
+
+                    let active = tracking_response.status != "delivered";
+                    if !active {
+                        current_url = None;
+                    }
                     FoodTracking {
                         resturant_name: tracking_response.from_location.name.en.into(),
-                        minutes_remaining: remaining_time.to_string().into(),
-                        active: tracking_response.status != "delivered",
+                        minutes_remaining,
+                        active,
                     }
                 }
                 Err(e) => {
