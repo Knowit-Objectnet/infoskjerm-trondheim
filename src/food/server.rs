@@ -1,11 +1,12 @@
-use std::sync::mpsc::Sender;
-
 use reqwest::Url;
 use serde::Deserialize;
+use std::env;
+use std::sync::mpsc::Sender;
 use tide::Request;
 
-const WOLT_TRACKING_URL: &str =
-    "https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/";
+fn get_tracking_url() -> String {
+    env::var("WOLT_TRACKING_URL").unwrap_or_else(|_| String::from("http://localhost:9000/"))
+}
 
 pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
     let mut app = tide::new();
@@ -28,10 +29,10 @@ pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
 
 async fn start_tracking(tx: Sender<Url>, mut req: Request<()>) -> tide::Result {
     let tracking: Tracking = req.body_form().await?;
-    //get last part of url
-
+    let wolt_tracking_url = get_tracking_url();
+    //TOOD: Avoid unwrap
     let tracking_id = tracking.url.path_segments().unwrap().last().unwrap();
-    let api_url = Url::parse(&format!("{}{}", WOLT_TRACKING_URL, tracking_id)).unwrap();
+    let api_url = Url::parse(&format!("{}{}", wolt_tracking_url, tracking_id)).unwrap();
     // Pass tracking url to the worker thread
     tx.send(api_url).unwrap();
     Ok(format!("Got it! Tracking food delivery").into())
