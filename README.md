@@ -26,6 +26,7 @@ GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint
 * XKCD
 * Vær
 * Klokke og dato
+* Matsporing via Wolt
 
 ## Andre tanker
 * Koderydding
