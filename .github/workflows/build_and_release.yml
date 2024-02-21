@@ -68,7 +68,7 @@ jobs:
       run: cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
 
     - name: Create Release
-      if: ${{ github.event.inputs.dry_run == 'false' }}
+      if: ${{ !github.event.inputs.dry_run || github.event.inputs.dry_run == 'false' }}
       id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,7 +80,7 @@ jobs:
         prerelease: false
 
     - name: Upload Release Asset
-      if: ${{ github.event.inputs.dry_run == 'false' }}
+      if: ${{ !github.event.inputs.dry_run || github.event.inputs.dry_run == 'false' }}
       id: upload-release-asset 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
