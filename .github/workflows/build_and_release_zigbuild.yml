@@ -51,7 +51,6 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
-    
     - uses: jethrodaniel/setup-zig@fix-caching
       with:
         version: 0.12.0-dev.903+7aa85691b
@@ -70,7 +69,7 @@ jobs:
       run: cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
 
     - name: Create Release
-      if: ${{ !github.event.inputs.dry_run }}
+      if: ${{ github.event.inputs.dry_run == 'false' }}
       id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,7 +81,7 @@ jobs:
         prerelease: false
 
     - name: Upload Release Asset
-      if: ${{ !github.event.inputs.dry_run }}
+      if: ${{ github.event.inputs.dry_run == 'false' }}
       id: upload-release-asset 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
