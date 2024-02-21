@@ -1,9 +1,8 @@
 name: Build and release
-
 on:
   push:
-    tags:
-    - 'v*' # Push events matching v*, i.e. v1.0, v20.15.10
+   tags:
+   - 'v*'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -27,18 +26,53 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Cross
-      run: cargo install cross
+    - name: Cache cargo bin
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/bin
+        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo registry
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo index
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo build
+      uses: actions/cache@v2
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+
+    - uses: jethrodaniel/setup-zig@fix-caching
+      with:
+        version: 0.12.0-dev.903+7aa85691b
+
+    - name: Install Arm compile target
+      run: rustup target add armv7-unknown-linux-gnueabihf
+
+    - name: Install Zigbuild
+      run: |
+        if ! command -v cargo-zigbuild &> /dev/null
+        then
+            cargo install cargo-zigbuild
+        fi
 
     - name: Build
-      run: cross build --release --target=armv7-unknown-linux-gnueabihf
+      run: cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
 
     - name: Create Release
-      if: ${{ !github.event.inputs.dry_run }}
+      if: ${{ github.event.inputs.dry_run == 'false' }}
       id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/create-release@v1
       with:
         tag_name: ${{ github.event.inputs.tag || github.ref }}
         release_name: Release ${{ github.event.inputs.tag || github.ref }}
@@ -46,11 +80,11 @@ jobs:
         prerelease: false
 
     - name: Upload Release Asset
-      if: ${{ !github.event.inputs.dry_run }}
+      if: ${{ github.event.inputs.dry_run == 'false' }}
       id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
