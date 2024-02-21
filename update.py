@@ -9,6 +9,10 @@ response = requests.get(
     "https://api.github.com/repos/Knowit-Objectnet/infoskjerm-trondheim/releases/latest")
 release_json = response.json()
 
+# Print the downloaded version
+version = release_json.get("tag_name")
+print(f"Downloaded version: {version}")
+
 # Step 2: Get the "browser_download_url" from the assets
 assets = release_json.get("assets", [])
 if len(assets) == 0:
