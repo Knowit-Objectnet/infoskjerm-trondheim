@@ -1,38 +1,40 @@
-use rust_embed::RustEmbed;
-slint::include_modules!();
-
 extern crate chrono;
 
-use std::rc::Rc;
-
 use chrono::Local;
-use slint::{Timer, TimerMode};
+use log::info;
+use rust_embed::RustEmbed;
+use slint::{PlatformError, Timer, TimerMode};
+use ui::*;
 use crate::transportation::test_graph_ql;
 
+mod food;
 mod weather;
 mod xkcd;
 mod transportation;
 
-use crate::weather::*;
-use crate::xkcd::*;
+pub mod ui {
+    slint::include_modules!();
+}
 
 // we embed img folder into the compiled binary for simpler distribution
 #[derive(RustEmbed)]
 #[folder = "img/"]
 struct StaticAssets;
 
-fn main() -> Result<(), slint::PlatformError> {
+fn main() -> Result<(), PlatformError> {
+    env_logger::init();
+    info!("Starting up...");
 
     test_graph_ql();
 
-    let ui = MainWindow::new()?;
-    let clock_timer = Timer::default();
-    let xkcd_timer = Timer::default();
-    let weather_timer = Timer::default();
+    let main_window = MainWindow::new().unwrap();
 
-    let clock_handle = ui.as_weak();
-    let xkcd_handle = ui.as_weak();
-    let weather_handle = ui.as_weak();
+    weather::setup(&main_window);
+    xkcd::setup(&main_window);
+    food::setup(&main_window);
+
+    let clock_timer = Timer::default();
+    let clock_handle = main_window.as_weak();
 
     clock_timer.start(
         TimerMode::Repeated,
@@ -40,7 +42,7 @@ fn main() -> Result<(), slint::PlatformError> {
         move || {
             let ui = clock_handle.unwrap();
             let now = Local::now();
-            let datestring = format!("{}", now.format("%H:%M:%S"));
+            let datestring = std::format!("{}", now.format("%H:%M:%S"));
             let date = now.format("%d").to_string().into();
             let month = now.format("%b").to_string().to_uppercase().into();
             ui.set_time(datestring.into());
@@ -49,35 +51,5 @@ fn main() -> Result<(), slint::PlatformError> {
         },
     );
 
-    let xkcd = get_current_xkcd();
-    ui.set_xkcdTitle(xkcd.title.into());
-    ui.set_xkcdFlavorText(xkcd.flavor_text.into());
-    ui.set_xkcdImage(xkcd.image);
-
-    xkcd_timer.start(
-        TimerMode::Repeated,
-        std::time::Duration::from_secs(3600 * 24),
-        move || {
-            let ui = xkcd_handle.unwrap();
-            let xkcd = get_current_xkcd();
-            ui.set_xkcdTitle(xkcd.title.into());
-            ui.set_xkcdImage(xkcd.image);
-            ui.set_xkcdFlavorText(xkcd.flavor_text.into());
-        },
-    );
-
-    let forecasts = get_forecast();
-    ui.set_forecasts(Rc::new(forecasts).into());
-
-    weather_timer.start(
-        TimerMode::Repeated,
-        std::time::Duration::from_secs(900),
-        move || {
-            let ui = weather_handle.unwrap();
-            let forecasts = get_forecast();
-            ui.set_forecasts(Rc::new(forecasts).into());
-        },
-    );
-
-    ui.run()
+    main_window.run()
 }

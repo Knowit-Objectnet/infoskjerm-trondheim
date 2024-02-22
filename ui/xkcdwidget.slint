@@ -1,26 +1,32 @@
 import { VerticalBox } from "std-widgets.slint";
 
+export struct Xkcd {
+        title: string,
+        image: image,
+        flavor_text: string,
+}
+
 export component XkcdWidget {
-    in property <string> title;
-    in property <image> image;
-    in property <string> flavorText;
-        VerticalBox {
+    in property <Xkcd> xkcd ;
+        VerticalLayout {
             spacing: 0;
-            alignment: start;
+            width: 75%;
+
             Image {
-                source: image;
+                source: xkcd.image;
             }
             Text {
                 horizontal-alignment: center;
                 color: whitesmoke;
-                text: title;
+                text: xkcd.title;
                 font-weight: 1000;
             }
             Text {
                 wrap: word-wrap;
                 horizontal-alignment: center;
                 color: whitesmoke;
-                text: flavorText;
+                text: xkcd.flavor-text;
+
             }
         }
  }

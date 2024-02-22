@@ -5,8 +5,10 @@ export struct Forecast {
     precipitation: string,
 }
 
-component WeatherLine {
+
+component WeatherRow {
     in property <Forecast> forecast;
+    
     HorizontalLayout {
         spacing: 1.5rem;
         alignment: center;
@@ -36,20 +38,40 @@ component WeatherLine {
     }
 }
 
-export component WeatherWidget { 
+component WeatherColumn {
     in property <[Forecast]> forecasts;
+    in property <string> heading;
+
     VerticalLayout {
         alignment: start;
         padding-top: 2rem;
         Text {
             color: whitesmoke;
             font-size: 4rem;
-            text: "Været i dag:";
+            text: heading;
             horizontal-alignment: center;
         }
-        for f in forecasts : WeatherLine {
+        
+        for f in forecasts : WeatherRow {
            forecast: f;
         }
     }
     
+}
+
+export component WeatherWidget { 
+    in property <[Forecast]> todayForecast;
+    in property <[Forecast]> tomorrowForecast;
+
+    HorizontalLayout {
+       WeatherColumn {
+           forecasts: todayForecast;
+           heading: "Været i dag";
+        }
+        WeatherColumn {
+            forecasts: tomorrowForecast;
+            heading: "Været i morgen";
+         }
+   
+    }
  }

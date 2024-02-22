@@ -1,49 +1,61 @@
 import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox , HorizontalBox} from "std-widgets.slint";
-import { XkcdWidget } from "xkcdwidget.slint";
+import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
+import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
     in property <string> month: "jan" ;
-    in property <[Forecast]> forecasts: [{
+    in property <[Forecast]> todayForecast: [{
         time: "12:00",
         temp: "3.0",
         icon: @image-url("../img/weather/fog.png"),
         precipitation: "4.0"
     }];
+    in property <[Forecast]> tomorrowForecast: [{
+        time: "12:00",
+        temp: "3.0",
+        icon: @image-url("../img/weather/fog.png"),
+        precipitation: "4.0"
+    }];
+    in property <Xkcd> xkcd: {
+        title: "Lorem Ipsum",
+        image: @image-url("../img/xkcd2.png"),
+        flavor_text: "Dolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit ametDolor sit amet"
+    };
 
-    //TODO: refactor into custom struct
-    in property <string> xkcdTitle: "Lorem ipsum";
-    in property <string> xkcdFlavorText: "Dolor sit amet";
-    in property <image> xkcdImage: @image-url("../img/xkcd.png");
+    in property <FoodTracking> foodTracking: {
+        active: true,
+        resturant_name: "McDonalds",
+        minutes_remaining: "5",
+    
+    };
 
     title: "Infoskjerm";
-    //todo: set these programtically
-    // width: 540px;
-    // height: 960px;
+    //width: 540px;
+    //height: 960px;
     background:  #030201;
     default-font-family: "sans";
-
-
     
     VerticalLayout{
         alignment: space-between;
 
-        WeatherWidget {
-            forecasts: forecasts;
+        WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
+
+        FoodTrackerWidget {
+            visible: foodTracking.active;
+            tracking: foodTracking;
         }
-        
+
         XkcdWidget {
             max-height: 30rem;
-            image: xkcdImage;
-            flavorText: xkcdFlavorText;
-            title: xkcdTitle;
-            }
+            xkcd: xkcd;
+        }
 
-        HorizontalBox {
+        HorizontalBox   {
             alignment: space-between;
             VerticalLayout {
                 alignment: end;
@@ -70,7 +82,7 @@ export component MainWindow inherits Window {
                 font-size: 4rem;
                 text: time;
             }
-    }
+        }
         
     }
 }
