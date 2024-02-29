@@ -7,7 +7,7 @@ export struct FoodTracking {
 export component FoodTrackerWidget{
     in property <FoodTracking> tracking;
     Text {
-        font-size: 4rem;
+        font-size: 1rem;
         text: "🍔🍟🍕Mat fra " + tracking.resturant_name + " kommer om " + tracking.minutes_remaining + " minutter! 🍕🍟🍔";
     }
 }
