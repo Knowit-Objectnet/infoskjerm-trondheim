@@ -1,7 +1,7 @@
 use super::wolt_models::WoltTracking;
 use crate::ui::*;
 use chrono::Local;
-use log::{error, info};
+use log::{debug, error, info};
 use reqwest::Url;
 use slint::{SharedString, Weak};
 use std::sync::mpsc::{Receiver, TryRecvError};
@@ -35,9 +35,7 @@ pub async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
             current_tracking = tracking_status;
         }
 
-        info!("Displaying tracking information: {:?}", current_tracking);
         display_tracking(&window, current_tracking.clone());
-        info!("Sleeping for 5 seconds");
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
 }
@@ -75,7 +73,7 @@ fn get_tracking_status(tracking_data: Result<WoltTracking, reqwest::Error>) -> F
 }
 
 fn display_tracking(window_weak: &Weak<MainWindow>, food_tracking: FoodTracking) {
-    info!("Updating UI with tracking information: {:?}", food_tracking);
+    debug!("Updating UI with tracking information: {:?}", food_tracking);
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| window.set_foodTracking(food_tracking))
         .unwrap();
