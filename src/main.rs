@@ -2,7 +2,6 @@ use log::info;
 use rust_embed::RustEmbed;
 use slint::PlatformError;
 use ui::*;
-use crate::transportation::test_graph_ql;
 
 mod calendar;
 mod datetime;
@@ -25,13 +24,12 @@ fn main() -> Result<(), PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    test_graph_ql();
-
     let main_window = MainWindow::new().unwrap();
     forecast::setup(&main_window);
     xkcd::setup(&main_window);
     food::setup(&main_window);
     calendar::setup(&main_window);
+    transportation::setup(&main_window);
 
     //we need to store the timers in variables to prevent them from being dropped
     let _t = datetime::setup(&main_window);

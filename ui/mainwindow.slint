@@ -4,6 +4,7 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
+import { StopPlaceData, TransportationWidget } from "transportation.slint";
 import { CalendarWidget, Event } from "calendarwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
@@ -36,6 +37,16 @@ export component MainWindow inherits Window {
     in property <[Event]> events: [{
         summary: "Placeholder calendar event",
         date: "31. April",
+    }];
+
+    in property <[StopPlaceData]> stopPlacesData: [{
+        stopName: "Placeholder",
+        stopDataRows: [{
+           transportMode: "Spark",
+           publicCode: 0,
+           destinationFrontText: "Månen",
+           aimedDepartureTime: "Nå",
+        }]
     }];
 
     title: "Infoskjerm";
@@ -75,6 +86,10 @@ export component MainWindow inherits Window {
 
         if foodTracking.active: FoodTrackerWidget {
             tracking: foodTracking;
+        }
+
+        TransportationWidget {
+            stopPlacesData: stopPlacesData;
         }
 
         CalendarWidget {
