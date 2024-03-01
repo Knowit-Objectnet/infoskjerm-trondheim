@@ -4,6 +4,7 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
+import { StopPlaceData, TransportationWidget } from "transportation.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -34,6 +35,16 @@ export component MainWindow inherits Window {
     
     };
 
+    in property <[StopPlaceData]> stopPlacesData: [{
+        stopName: "Placeholder",
+        stopDataRows: [{
+           transportMode: "Spark",
+           publicCode: 0,
+           destinationFrontText: "Månen",
+           aimedDepartureTime: "Nå",
+        }]
+    }];
+
     title: "Infoskjerm";
     //width: 540px;
     //height: 960px;
@@ -48,6 +59,10 @@ export component MainWindow inherits Window {
         FoodTrackerWidget {
             visible: foodTracking.active;
             tracking: foodTracking;
+        }
+
+        TransportationWidget {
+            stopPlacesData: stopPlacesData;
         }
 
         XkcdWidget {

@@ -5,7 +5,6 @@ use log::info;
 use rust_embed::RustEmbed;
 use slint::{PlatformError, Timer, TimerMode};
 use ui::*;
-use crate::transportation::test_graph_ql;
 
 mod food;
 mod weather;
@@ -25,13 +24,12 @@ fn main() -> Result<(), PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
-    test_graph_ql();
-
     let main_window = MainWindow::new().unwrap();
 
     weather::setup(&main_window);
     xkcd::setup(&main_window);
     food::setup(&main_window);
+    transportation::setup(&main_window);
 
     let clock_timer = Timer::default();
     let clock_handle = main_window.as_weak();

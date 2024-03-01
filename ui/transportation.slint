@@ -1,0 +1,70 @@
+export struct StopPlaceDataRow {
+    transportMode: string,
+    publicCode: string,
+    destinationFrontText: string,
+    aimedDepartureTime: string,
+}
+
+export struct StopPlaceData {
+    stopName: string,
+    stopDataRows: [StopPlaceDataRow]
+}
+
+component StopPlaceRow {
+    in property <StopPlaceDataRow> stopPlaceDataRow;
+
+    HorizontalLayout {
+        spacing: 1.5rem;
+        alignment: center;
+        Text {
+            font-size: 3rem;
+            text: stopPlaceDataRow.transportMode;
+            color: whitesmoke;
+        }
+        Text {
+            font-size: 3rem;
+            text: stopPlaceDataRow.publicCode;
+            color: whitesmoke;
+        }
+        Text {
+            font-size: 3rem;
+            text: stopPlaceDataRow.destinationFrontText;
+            color: whitesmoke;
+        }
+        Text {
+            font-size: 3rem;
+            text: stopPlaceDataRow.aimedDepartureTime;
+            color: yellow;
+        }
+    }
+}
+
+component StopPlaceColumn {
+    in property <StopPlaceData> stopPlaceData;
+
+    VerticalLayout {
+        alignment: start;
+        padding-top: 2rem;
+
+        Text {
+            color: whitesmoke;
+            font-size: 4rem;
+            text: stopPlaceData.stopName;
+            horizontal-alignment: center;
+        }
+
+        for stopPlaceRow in stopPlaceData.stopDataRows : StopPlaceRow {
+            stopPlaceDataRow: stopPlaceRow;
+        }
+    }
+}
+
+export component TransportationWidget{
+    in property <[StopPlaceData]> stopPlacesData;
+
+    HorizontalLayout {
+        for stopPlace in stopPlacesData : StopPlaceColumn {
+            stopPlaceData: stopPlace;
+        }
+    }
+}
