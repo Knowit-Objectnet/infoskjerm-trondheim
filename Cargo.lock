@@ -2671,6 +2671,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ical"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4bad4eb99ee34e58a1e642114eded65b4ea5ea3c1584971a1afc12a3b927670"
+dependencies = [
+ "thiserror",
+]
+
+[[package]]
 name = "icrate"
 version = "0.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2771,6 +2780,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "env_logger",
+ "ical",
  "image",
  "log",
  "reqwest",

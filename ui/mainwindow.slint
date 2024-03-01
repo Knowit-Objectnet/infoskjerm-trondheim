@@ -6,6 +6,7 @@ import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
+import { CalendarWidget, Cal } from "calendarwidget.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -34,6 +35,10 @@ export component MainWindow inherits Window {
     
     };
 
+    in property <[Cal]> events: [{
+        summary: "Test calendar",
+    }];
+
     title: "Infoskjerm";
     //TODO: Set programmatically?
     no-frame: true;
@@ -53,6 +58,10 @@ export component MainWindow inherits Window {
 
         if foodTracking.active: FoodTrackerWidget {
             tracking: foodTracking;
+        }
+
+        CalendarWidget {
+            events: events;
         }
 
         XkcdWidget {

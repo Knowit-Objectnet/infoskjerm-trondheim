@@ -9,6 +9,7 @@ use ui::*;
 mod food;
 mod forecast;
 mod xkcd;
+mod calendar;
 
 pub mod ui {
     slint::include_modules!();
@@ -28,6 +29,7 @@ fn main() -> Result<(), PlatformError> {
     forecast::setup(&main_window);
     xkcd::setup(&main_window);
     food::setup(&main_window);
+    calendar::setup(&main_window);
 
     let clock_timer = Timer::default();
     let clock_handle = main_window.as_weak();
