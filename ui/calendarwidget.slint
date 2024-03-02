@@ -1,19 +1,31 @@
 import { VerticalBox } from "std-widgets.slint";
 
-export struct Cal {
+export struct Event {
         summary: string,
+        date: string,
 }
 
 export component CalendarWidget {
-    in property <[Cal]> events;
-         VerticalLayout {
+    in property <[Event]> events;
+    VerticalLayout {
 
+        alignment: start;
+        padding-top: 1rem;
+        for event in events : VerticalLayout {
             alignment: start;
-            padding-top: 2rem;
-            for cal in events : Text {
+            padding: 0.5rem;
+            Text {
                 horizontal-alignment: center;
                 color: whitesmoke;
-                text: cal.summary;
+                font-size: 1.2rem;
+                text: event.summary;
+            }
+
+            Text {
+                horizontal-alignment: center;
+                color: whitesmoke;
+                text: event.date;
             }
         }
+    }
  }

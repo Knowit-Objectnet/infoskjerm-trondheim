@@ -7,6 +7,7 @@ import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
 import { CalendarWidget, Cal } from "calendarwidget.slint";
+import { CalendarWidget, Event } from "calendarwidget.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -35,8 +36,9 @@ export component MainWindow inherits Window {
     
     };
 
-    in property <[Cal]> events: [{
-        summary: "Test calendar",
+    in property <[Event]> events: [{
+        summary: "Placeholder calendar event",
+        date: "",
     }];
 
     title: "Infoskjerm";

@@ -3,21 +3,19 @@ extern crate ical;
 use crate::ui::*;
 
 
-use chrono::{DateTime, Local, NaiveDateTime, Offset};
+use chrono::{ DateTime, Local, Locale, NaiveDateTime, TimeZone};
 use ical::parser::ical::component::IcalEvent;
-use log::{error, info};
+use log::{debug, error};
 use slint::{VecModel, Weak};
-use tide::new;
-use std::{error, fmt, fs::File, io::BufReader, rc::Rc, thread};
-
+use std::{rc::Rc, thread};
 
 const CAL_URL: &str ="https://outlook.office365.com/owa/calendar/4ccddc187e214383b2914f75061813b6@knowit.no/06d7c824a8c0401a9d0519fbccb7d29d8889045414010058404/calendar.ics";
 
 #[derive(Debug)]
 pub struct CalendarEvent {
     pub summary: String,
-    pub start_time: NaiveDateTime,
-    pub end_time: NaiveDateTime,
+    pub start_time: DateTime<Local>,
+    pub end_time: DateTime<Local>,
 }
 
 pub fn setup(window: &MainWindow) {
@@ -44,18 +42,21 @@ async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<Calendar
 
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
-            let calendar_events: VecModel<Cal> = VecModel::default();
+            let calendar_events: VecModel<Event> = VecModel::default();
 
-            for event in calendar {
-                let event_string: String = format!("{} - {}-{}",event.summary,event.start_time.format("%Y-%m-%d %H:%M").to_string(),event.end_time.format("%H:%M").to_string());
+            let mut upcoming_events: Vec<CalendarEvent> = calendar.into_iter().filter(|x| x.end_time >= Local::now()).collect();
+            upcoming_events.sort_by(|a,b| a.start_time.cmp(&b.start_time));
 
-                calendar_events.push( Cal {
-                    summary: event_string.into(),
+            for event in &upcoming_events[0..3] {
+                let date_and_start_time = event.start_time.format_localized("%-d %B %H:%M",Locale::nb_NO);
+                let end_time = event.end_time.format_localized("%H:%M", Locale::nb_NO);
+                let summary = &event.summary;
+                calendar_events.push( Event {
+                    summary: summary.into(),
+                    date: format!("{0}-{1}",date_and_start_time,end_time).into()
                 });
             }
             
-
-
             window.set_events(Rc::new(calendar_events).into());
         })
         .unwrap();
@@ -63,17 +64,17 @@ async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<Calendar
 
 pub async fn get_current_calendar() -> Vec<CalendarEvent> {
 
-    let foo = fetch_calendar().await;
+    let result = fetch_calendar().await;
 
-    let x = if let Ok(foo) = foo {
-        parse_calendar(foo.as_bytes()).await
+    let events = if let Ok(result) = result {
+        parse_calendar(result.as_bytes()).await
     } else {
         vec!()
     };
 
-    info!("Loaded events: {:?}", x);
+    debug!("Loaded events from calendar: {:?}", events);
 
-    x
+    events
 }
 
 pub async fn fetch_calendar() -> Result<String, reqwest::Error> {
@@ -101,8 +102,8 @@ pub async fn parse_calendar(cal_to_parse: &[u8]) -> Vec<CalendarEvent> {
 
     for event in events_unparsed {
         let mut summary:Option<String> = None;
-        let mut startTime:Option<NaiveDateTime> = None;
-        let mut endTime:Option<NaiveDateTime> = None;
+        let mut start_time:Option<DateTime<Local>> = None;
+        let mut end_time:Option<DateTime<Local>> = None;
         for property in event.properties {
             let name: &str = property.name.as_str();
             let value: String = property.value.unwrap_or(String::from(""));
@@ -111,26 +112,39 @@ pub async fn parse_calendar(cal_to_parse: &[u8]) -> Vec<CalendarEvent> {
 
             match name {
                "SUMMARY" => summary = Some(value),
-               "DTSTART" => startTime = parse_date(value).await,
-               "DTEND" => endTime = parse_date(value).await,
+               "DTSTART" => start_time = parse_date(value).await,
+               "DTEND" => end_time = parse_date(value).await,
                 _ => ()
             }
         }
 
-        if summary.is_some() && startTime.is_some() && endTime.is_some() {
-            calender_events.push(CalendarEvent {summary: summary.unwrap(), start_time: startTime.unwrap(), end_time: endTime.unwrap()})
+        if summary.is_some() && start_time.is_some() && end_time.is_some() {
+            calender_events.push(CalendarEvent {summary: summary.unwrap(), start_time: start_time.unwrap(), end_time: end_time.unwrap()})
         }
     }
 
     calender_events
 }
 
-pub async fn parse_date(date_string: String) -> Option<NaiveDateTime> {
-    match NaiveDateTime::parse_from_str(&date_string, "%Y%m%dT%H%M%S") {
+pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
+    
+    let date = match NaiveDateTime::parse_from_str(&date_string, "%Y%m%dT%H%M%S") {
         Ok(datetime) => Some(datetime),
         Err(err) => { 
             println!("Error parsing datetime: {:?}", err);
             None
         }
+    };
+
+    let local_date = match date {
+        Some(date) => Local.from_local_datetime(&date),
+        None => todo!(),
+    };
+
+    match local_date {
+        chrono::LocalResult::None => None,
+        chrono::LocalResult::Single(a) => Some(a),
+        chrono::LocalResult::Ambiguous(a, _) => Some(a),
     }
+
 }
