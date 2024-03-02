@@ -8,6 +8,10 @@ fn get_tracking_url() -> String {
     env::var("WOLT_TRACKING_URL").unwrap_or_else(|_| String::from("http://localhost:9000/"))
 }
 
+fn get_server_url() -> String {
+    env::var("FOOD_SERVER_URL").unwrap_or_else(|_| String::from("http://localhost:1337/"))
+}
+
 pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
     let mut app = tide::new();
     let food_html = include_str!("index.html");
@@ -23,7 +27,8 @@ pub async fn food_endpoint_server(tx: Sender<Url>) -> tide::Result<()> {
     app.at("/tracking")
         .post(move |req| start_tracking(tx.clone(), req));
 
-    app.listen("0.0.0.0:1337").await?;
+    let server_url = get_server_url();
+    app.listen(server_url).await?;
     Ok(())
 }
 

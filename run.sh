@@ -3,6 +3,7 @@ export DISPLAY=:0
 export SLINT_FULLSCREEN=1
 export RUST_LOG=info
 export WOLT_TRACKING_URL=https://consumer-api.wolt.com/order-tracking-api/v1/details/tracking-code/track/
+export FOOD_SERVER_URL="0.0.0.0:1337"
 
 # Function to check Wi-Fi connection
 check_wifi() {
