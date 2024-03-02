@@ -4,6 +4,7 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { WeatherWidget, Forecast } from "weatherwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
+import "./assets/Bagoss.ttf";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -37,8 +38,9 @@ export component MainWindow inherits Window {
     title: "Infoskjerm";
     //width: 540px;
     //height: 960px;
-    background:  #030201;
-    default-font-family: "sans";
+    background: #0C0C27;
+
+    default-font-family: "Bagoss";
     
     VerticalLayout{
         alignment: space-between;
@@ -65,19 +67,19 @@ export component MainWindow inherits Window {
                     font-size: 2.4rem;
                     font-weight: 700;
                     horizontal-alignment: center;
-                    color: whitesmoke;
+                    color: #FEFBE6;
                     text: date;
                 }
                 Text {
                     font-size: 1.1rem;
                     horizontal-alignment: center;
-                    color: whitesmoke;
+                    color: #FEFBE6;
                     text: month;
                 }
             }   
     
             Text {
-                color: whitesmoke;
+                color: #FEFBE6;
                 horizontal-alignment: right;
                 font-size: 4rem;
                 text: time;
