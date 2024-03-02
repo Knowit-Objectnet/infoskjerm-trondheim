@@ -47,8 +47,7 @@ export component MainWindow inherits Window {
 
         WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
 
-        FoodTrackerWidget {
-            visible: foodTracking.active;
+        if foodTracking.active: FoodTrackerWidget {
             tracking: foodTracking;
         }
 
