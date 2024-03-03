@@ -35,7 +35,7 @@ pub async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
             current_tracking = tracking_status;
         }
 
-        display_tracking(&window, current_tracking.clone());
+        // display_tracking(&window, current_tracking.clone());
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
 }
