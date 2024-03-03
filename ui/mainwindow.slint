@@ -43,47 +43,42 @@ export component MainWindow inherits Window {
     default-font-family: "Bagoss";
     
     VerticalLayout{
+        width: 100%;
+        padding-left: 2rem;
+        padding-right: 2rem;
         alignment: space-between;
 
-        WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
-
-        if foodTracking.active: FoodTrackerWidget {
-            tracking: foodTracking;
-        }
+        if true: WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
+        if true: FoodTrackerWidget {tracking: foodTracking;}
 
         XkcdWidget {
             max-height: 30rem;
             xkcd: xkcd;
         }
 
-        HorizontalBox   {
+        HorizontalLayout   {
+            width: 100%;
             alignment: space-between;
-            VerticalLayout {
-                alignment: end;
-                spacing: -3px;
-                padding-bottom: 6px;
-                Text {
-                    font-size: 2.4rem;
-                    font-weight: 700;
-                    horizontal-alignment: center;
-                    color: #FEFBE6;
-                    text: date;
+                VerticalLayout {
+                    spacing: -3px;
+                    padding-bottom: 6px;
+                    Text {
+                        font-size: 2.4rem;
+                        font-weight: 700;
+                        color: #FEFBE6;
+                        text: date;
+                    }
+                    Text {
+                        font-size: 1.1rem;
+                        color: #FEFBE6;
+                        text: month;
+                    }
                 }
                 Text {
-                    font-size: 1.1rem;
-                    horizontal-alignment: center;
                     color: #FEFBE6;
-                    text: month;
+                    font-size: 4rem;
+                    text: time;
                 }
-            }   
-    
-            Text {
-                color: #FEFBE6;
-                horizontal-alignment: right;
-                font-size: 4rem;
-                text: time;
-            }
-        }
-        
+            }       
     }
 }
