@@ -2,7 +2,7 @@ import { Button, VerticalBox } from "std-widgets.slint";
 
 import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
-import { WeatherWidget, Forecast } from "weatherwidget.slint";
+import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 import "./assets/Bagoss.ttf";
 
@@ -10,18 +10,16 @@ export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
     in property <string> month: "jan" ;
-    in property <[Forecast]> todayForecast: [{
-        time: "12:00",
-        temp: "3.0",
-        icon: @image-url("../img/weather/fog.png"),
-        precipitation: "4.0"
-    }];
-    in property <[Forecast]> tomorrowForecast: [{
-        time: "12:00",
-        temp: "3.0",
-        icon: @image-url("../img/weather/fog.png"),
-        precipitation: "4.0"
-    }];
+    in property <Forecast> todayForecast: {
+        temp: "-1",
+        precipitation: "2",
+        icon: @image-url("../img/weather/partlycloudy_day.png")
+    };
+    in property <Forecast> tomorrowForecast: {
+        temp: "-1",
+        precipitation: "2",
+        icon: @image-url("../img/weather/partlycloudy_day.png")
+    };
     in property <Xkcd> xkcd: {
         title: "Lorem Ipsum",
         image: @image-url("../img/xkcd2.png"),
@@ -48,8 +46,11 @@ export component MainWindow inherits Window {
         padding-right: 2rem;
         alignment: space-between;
 
-        if true: WeatherWidget { todayForecast: todayForecast; tomorrowForecast: tomorrowForecast;}
-        if true: FoodTrackerWidget {tracking: foodTracking;}
+        ForecastWidget { today: todayForecast; tomorrow: tomorrowForecast;}
+
+        if foodTracking.active: FoodTrackerWidget {
+            tracking: foodTracking;
+        }
 
         XkcdWidget {
             max-height: 30rem;

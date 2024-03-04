@@ -1,0 +1,68 @@
+import { VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+export struct Forecast {
+    temp: string,
+    icon: image,
+    precipitation: string,
+}
+
+component ForecastCell {
+    in property <Forecast> forecast;
+    in property <string> heading;
+
+    VerticalBox {
+        HorizontalBox {
+            alignment: center;
+            Image {
+                max-height: 8.75rem;
+                max-width: 8.75rem;
+                source: forecast.icon;
+            }
+
+            VerticalBox {
+                Text {
+                    text: forecast.temp + "°";
+                    font-size: 4rem;
+                    horizontal-alignment: center;
+                }
+
+                Text {
+                    text: forecast.precipitation + "mm";
+                    font-size: 1.5rem;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+
+        Text {
+            text: heading;
+            font-size: 2.5rem;
+            horizontal-alignment: center;
+        }
+    }
+}
+
+export component ForecastWidget {
+    in property <Forecast> today: {
+        temp: "-1",
+        precipitation: "2",
+        icon: @image-url("../img/weather/partlycloudy_day.png")
+    };
+    in property <Forecast> tomorrow: {
+        temp: "-1",
+        precipitation: "2",
+        icon: @image-url("../img/weather/partlycloudy_day.png")
+    };
+
+    HorizontalBox {
+        width: 100%;
+        ForecastCell {
+            forecast: today;
+            heading: "I dag";
+        }
+        ForecastCell {
+            forecast: tomorrow;
+            heading: "I morgen";
+        }
+    }
+}
