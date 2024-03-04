@@ -18,7 +18,7 @@ GUIet er laga med DSL'en Slint, og ligg i ui-mappa. [mainwindow.slint](./ui/main
 
 SharedString er ein spesiell type String brukt av Slint, og lagast ved å kalle `.into()` på `&str` og `Strings`. Strengar er litt rare i Rust. Sjå gjerne [denne](https://doc.rust-lang.org/rust-by-example/std/str.html).
 
-GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint](./ui/weatherwidget.slint). Denne blir også tilgjengelig i Rust-koden gjennom `ui`-modulen.
+GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint](./ui/forecastwidget.slint). Denne blir også tilgjengelig i Rust-koden gjennom `ui`-modulen.
 
 
 
