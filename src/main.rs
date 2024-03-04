@@ -7,7 +7,6 @@ use slint::{PlatformError, Timer, TimerMode};
 use ui::*;
 
 mod food;
-mod weather;
 mod forecast;
 mod xkcd;
 
@@ -26,7 +25,6 @@ fn main() -> Result<(), PlatformError> {
 
     let main_window = MainWindow::new().unwrap();
 
-    weather::setup(&main_window);
     forecast::setup(&main_window);
     xkcd::setup(&main_window);
     food::setup(&main_window);
