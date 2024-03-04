@@ -35,7 +35,7 @@ pub async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
             current_tracking = tracking_status;
         }
 
-        // display_tracking(&window, current_tracking.clone());
+        display_tracking(&window, current_tracking.clone());
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
     }
 }
@@ -61,6 +61,7 @@ fn get_tracking_status(tracking_data: Result<WoltTracking, reqwest::Error>) -> F
 
             FoodTracking {
                 resturant_name: tracking_data.from_location.name.en.into(),
+                status: tracking_data.status.into(),
                 minutes_remaining,
                 active,
             }
