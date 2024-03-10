@@ -5,6 +5,7 @@ import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
 import "./assets/Bagoss.ttf";
+import "./assets/FiraMono-Regular.ttf";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
@@ -80,6 +81,7 @@ export component MainWindow inherits Window {
                 horizontal-alignment: right;
                 font-size: 4rem;
                 text: time;
+                font-family: "Fira Mono";
             }
         }
         
