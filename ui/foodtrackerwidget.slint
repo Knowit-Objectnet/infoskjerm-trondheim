@@ -1,14 +1,60 @@
+import { HorizontalBox, VerticalBox } from "std-widgets.slint";
 export struct FoodTracking {
     resturant_name: string,
     minutes_remaining: string,
+    status: string,
     active: bool,
 }
 
 export component FoodTrackerWidget{
     in property <FoodTracking> tracking;
-    Text {
-        font-size: 3rem;
-        text: "Mat fra " + tracking.resturant_name + " kommer om " + tracking.minutes_remaining + " minutter!";
-        color: #FEFBE6;
-    }
+        Rectangle {
+            height: 8rem;
+            background: #FFFFFF;
+            border-radius: 32px;
+            HorizontalLayout {
+                alignment: space-around;
+                VerticalBox {
+                    Text {
+                        text: "Fra";
+                        color: #1F0D8D;
+                        font-size: 2.5rem;
+                    }
+                    Text {
+                        text: tracking.resturant_name;
+                        color: #000000;
+                        font-size: 2rem;
+                    }
+                }
+                VerticalBox {
+                    Text {
+                        text: "Status";
+                        color: #1F0D8D;
+                        font-size: 2.5rem;
+                    }
+                    Text {
+                        text: tracking.status;
+                        color: #000000;
+                        font-size: 2rem;
+                    }
+                }
+                VerticalBox {
+                    Text {
+                        text: "ETA";
+                        color: #1F0D8D;
+                        font-size: 2.5rem;
+                    }
+                    Text {
+                        text: tracking.minutes-remaining + " minutter";
+                        color: #000000;
+                        font-size: 2rem;
+                    }
+                }
+                Image {
+                    source: @image-url("../img/wolt.png");
+                    width: 100px;
+                }
+    
+            }
+        }
 }

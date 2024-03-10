@@ -61,6 +61,7 @@ fn get_tracking_status(tracking_data: Result<WoltTracking, reqwest::Error>) -> F
 
             FoodTracking {
                 resturant_name: tracking_data.from_location.name.en.into(),
+                status: tracking_data.status.into(),
                 minutes_remaining,
                 active,
             }
