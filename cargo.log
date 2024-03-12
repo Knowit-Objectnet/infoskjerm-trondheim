@@ -1,0 +1,44 @@
+[1m[32m    Finished[0m release [optimized] target(s) in 0.26s
+[1m[32m     Running[0m `target/release/infoskjerm`
+[2024-03-11T22:18:18Z INFO  infoskjerm] Starting up...
+[2024-03-11T22:18:18Z WARN  winit::platform_impl::platform::x11::util::randr] XRandR reported that the display's 0mm in size, which is certifiably insane
+[2024-03-11T22:18:18Z INFO  winit::platform_impl::platform::x11::window] Guessed window scale factor: 1
+[2024-03-11T22:18:18Z DEBUG winit::platform_impl::platform::x11::window] Calculated physical dimensions: 800x600
+[2024-03-11T22:18:19Z INFO  infoskjerm::forecast] Fetching weather data
+[2024-03-11T22:18:19Z DEBUG reqwest::connect] starting new connection: https://xkcd.com/
+[2024-03-11T22:18:19Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:19Z DEBUG reqwest::connect] starting new connection: https://api.met.no/
+[2024-03-11T22:18:19Z INFO  tide::server] Server listening on http://[::1]:1337
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] No cached session for DnsName("xkcd.com")
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Not resuming any session
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] ALPN protocol is Some(b"http/1.1")
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Using ciphersuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12::server_hello] Server supports tickets
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12::server_hello] Server may staple OCSP response
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12] ECDHE curve is ECParameters { curve_type: NamedCurve, named_group: X25519 }
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12] Server DNS name is DnsName("xkcd.com")
+[2024-03-11T22:18:19Z INFO  infoskjerm::xkcd] Loaded xkcd: Supergroup
+[2024-03-11T22:18:19Z DEBUG rustls::common_state] Sending warning alert CloseNotify
+[2024-03-11T22:18:19Z DEBUG reqwest::connect] starting new connection: https://imgs.xkcd.com/
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] No cached session for DnsName("imgs.xkcd.com")
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Not resuming any session
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] ALPN protocol is Some(b"http/1.1")
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Using ciphersuite TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12::server_hello] Server supports tickets
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12::server_hello] Server may staple OCSP response
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12] ECDHE curve is ECParameters { curve_type: NamedCurve, named_group: X25519 }
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls12] Server DNS name is DnsName("imgs.xkcd.com")
+[2024-03-11T22:18:19Z DEBUG rustls::common_state] Sending warning alert CloseNotify
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] No cached session for DnsName("api.met.no")
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Not resuming any session
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] Using ciphersuite TLS13_AES_256_GCM_SHA384
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls13] Not resuming
+[2024-03-11T22:18:19Z DEBUG rustls::client::tls13] TLS1.3 encrypted extensions: [ServerNameAck, Protocols([ProtocolName(6832)])]
+[2024-03-11T22:18:19Z DEBUG rustls::client::hs] ALPN protocol is Some(b"h2")
+[2024-03-11T22:18:20Z DEBUG rustls::common_state] Sending warning alert CloseNotify
+[2024-03-11T22:18:24Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:29Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:34Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:39Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:44Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }
+[2024-03-11T22:18:49Z DEBUG infoskjerm::food::worker] Updating UI with tracking information: FoodTracking { active: false, minutes_remaining: "", resturant_name: "", status: "" }

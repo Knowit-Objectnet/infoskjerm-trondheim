@@ -2,11 +2,14 @@ name: Take Screenshot
 on:
     push:
         branches:
-        - master
+        - main
+    workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
-  DISPLAY: :0
+  DISPLAY: :99
+  SLINT_FULLSCREEN: 1
+  RUST_LOG: debug
 
 jobs:
   build:
@@ -18,46 +21,49 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cargo/bin
-        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-bin-foo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache cargo registry
       uses: actions/cache@v2
       with:
         path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-registry-foo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache cargo index
       uses: actions/cache@v2
       with:
         path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-git-foo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache cargo build
       uses: actions/cache@v2
       with:
         path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-build-target-foo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb scrot imagemagick
+        sudo apt-get install -y xvfb x11-apps scrot imagemagick libxkbcommon-x11-0
 
-    - uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
+    - name: Build
+      run: cargo build --release
 
     - name: Start Xvfb
       run: |
-        Xvfb :0 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        sleep 5  # Add a delay to give Xvfb time to start
-        sleep 10
-        scrot -o screenshot.png
+        Xvfb :99 -screen 0 768x1024x24 & > /dev/null 2>&1 &
+        sleep 5
+        cargo run --release > cargo.log 2>&1 &
+        sleep 30
+        cat cargo.log
+        xwd -root -out screenshot.xwd
+        convert screenshot.xwd fooPoop.png
+        scrot screenshot.png
 
     - name: Commit and push screenshot
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add screenshot.png
+        git add .
         git commit -m "Add screenshot" -a
         git push
