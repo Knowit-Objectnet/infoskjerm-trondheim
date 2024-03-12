@@ -19,7 +19,7 @@ pub mod ui {
 #[folder = "img/"]
 struct StaticAssets;
 
-fn main() -> Result<(), PlatformError> {
+fn setup() -> Result<MainWindow, PlatformError> {
     env_logger::init();
     info!("Starting up...");
 
@@ -47,5 +47,21 @@ fn main() -> Result<(), PlatformError> {
         },
     );
 
+    Ok(main_window)
+}
+
+fn main() -> Result<(), PlatformError> {
+    let main_window = setup()?;
     main_window.run()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_setup() {
+        let result = setup();
+        assert!(result.is_ok());
+    }
 }
