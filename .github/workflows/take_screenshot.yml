@@ -8,7 +8,6 @@ on:
 env:
   CARGO_TERM_COLOR: always
   DISPLAY: :99
-  SLINT_FULLSCREEN: 1
   RUST_LOG: debug
 
 jobs:
