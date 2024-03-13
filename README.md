@@ -2,6 +2,8 @@
 
 Infoskjerm for Trondheimkontoret, skrive i [Rust](https://www.rust-lang.org/), med [Slint](https://slint.dev/).
 
+![](screenshot.png)
+
 ## Kom i gang!
 * [Installer Rust](https://www.rust-lang.org/tools/install)
 * Installer [Rust Analyzer for VSCode](https://code.visualstudio.com/docs/languages/rust)*

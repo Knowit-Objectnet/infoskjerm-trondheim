@@ -1,0 +1,72 @@
+name: Take Screenshot
+on:
+    push:
+        branches:
+        - main
+    workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  DISPLAY: :99
+  SLINT_FULLSCREEN: 1
+  RUST_LOG: debug
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache cargo bin
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/bin
+        key: ${{ runner.os }}-cargo-bin-foo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo registry
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/registry
+        key: ${{ runner.os }}-cargo-registry-foo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo index
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo/git
+        key: ${{ runner.os }}-cargo-git-foo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Cache cargo build
+      uses: actions/cache@v2
+      with:
+        path: target
+        key: ${{ runner.os }}-cargo-build-target-foo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Build
+      run: cargo build --release
+
+    - name: Hide Dock
+      run: defaults write com.apple.dock autohide -bool true && killall Dock
+
+    - name: Run and take screenshot
+      run: |
+        cargo run --release > cargo.log 2>&1 &
+        sleep 5
+        cat cargo.log
+        window_info=$(osascript -e 'tell application "System Events" to tell process "infoskjerm" to get {position, size} of window 1')
+        x=$(echo $window_info | cut -d, -f1)
+        y=$(echo $window_info | cut -d, -f2)
+        w=$(echo $window_info | cut -d, -f3)
+        h=$(echo $window_info | cut -d, -f4)
+
+        rectangle="${x},${y},${w},${h}"
+        rectangle=$(echo $rectangle | tr -d ' ')
+        screencapture -R$rectangle screenshot.png
+
+
+    - name: Commit and push screenshot
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add screenshot.png
+        git commit -m "Add updated screenshot"
+        git push
