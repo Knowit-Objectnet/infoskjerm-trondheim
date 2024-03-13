@@ -76,10 +76,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: screenshot
-        path: screenshot.png
-
-    - name: Upload screenshot2 as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: fullscreen
-        path: fullscreen.png
+        path: |
+          screenshot.png
+          fullscreen.png
