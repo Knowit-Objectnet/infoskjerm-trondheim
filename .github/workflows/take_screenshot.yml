@@ -61,6 +61,7 @@ jobs:
         rectangle="${x},${y},${w},${h}"
         rectangle=$(echo $rectangle | tr -d ' ')
         screencapture -R$rectangle screenshot.png
+        screencapture fullscreen.png
 
 
     - name: Commit and push screenshot
@@ -70,3 +71,15 @@ jobs:
         git add screenshot.png
         git commit -m "Add updated screenshot"
         git push
+
+    - name: Upload screenshots as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: screenshot
+        path: screenshot.png
+
+    - name: Upload screenshot2 as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: fullscreen
+        path: fullscreen.png
