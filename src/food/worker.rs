@@ -24,7 +24,7 @@ pub async fn food_worker_loop(window: Weak<MainWindow>, rx: Receiver<Url>) {
 
         if let Some(url) = &current_url {
             info!("Fetching tracking data for url: {}", url);
-            let tracking_response = get_tracking_data(&url).await;
+            let tracking_response = get_tracking_data(url).await;
             let tracking_status = get_tracking_status(tracking_response);
 
             if !tracking_status.active {

@@ -39,12 +39,12 @@ fn display_forecast(window: &Weak<MainWindow>, today: ForecastModel, tomorrow: F
     });
 }
 
-impl Into<Forecast> for ForecastModel {
-    fn into(self) -> Forecast {
+impl From<ForecastModel> for Forecast {
+    fn from(val: ForecastModel) -> Self {
         Forecast {
-            icon: get_icon(self.icon_name),
-            precipitation: self.precip.into(),
-            temp: self.temp.into()
+            icon: get_icon(val.icon_name),
+            precipitation: val.precip.into(),
+            temp: val.temp.into()
         }
     }
 }
@@ -70,12 +70,12 @@ async fn get_forecast_data() -> Option<ForecastRaw> {
     };
 
     match forecast_json {
-        Ok(res) => return Some(res),
+        Ok(res) => Some(res),
         Err(err) => {
             error!("Failed to deserialize json: {}", err);
-            return None;
+            None
         }
-    };
+    }
 }
 
 fn get_forecast_today(data: &ForecastRaw) -> ForecastModel {

@@ -40,7 +40,7 @@ async fn start_tracking(tx: Sender<Url>, mut req: Request<()>) -> tide::Result {
     let api_url = Url::parse(&format!("{}{}", wolt_tracking_url, tracking_id)).unwrap();
     // Pass tracking url to the worker thread
     tx.send(api_url).unwrap();
-    Ok(format!("Got it! Tracking food delivery").into())
+    Ok("Got it! Tracking food delivery".to_string().into())
 }
 
 #[derive(Debug, Deserialize)]
