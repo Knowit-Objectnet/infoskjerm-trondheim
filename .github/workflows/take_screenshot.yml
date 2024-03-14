@@ -2,7 +2,11 @@ name: Take Screenshot
 on:
     push:
         branches:
-        - main
+          - main
+        paths:
+          - 'src/**'
+          - 'img/**'
+          - 'ui/**'
     workflow_dispatch:
 
 env:
