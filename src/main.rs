@@ -48,4 +48,4 @@ fn main() -> Result<(), PlatformError> {
     );
 
     main_window.run()
-
+}
