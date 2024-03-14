@@ -16,24 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache cargo bin
-      uses: actions/cache@v2
-      with:
-        path: ~/.cargo/bin
-        key: ${{ runner.os }}-cargo-bin-foo-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Cache cargo registry
-      uses: actions/cache@v2
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-foo-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: Cache cargo index
-      uses: actions/cache@v2
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-git-foo-${{ hashFiles('**/Cargo.lock') }}
-
     - name: Cache cargo build
       uses: actions/cache@v2
       with:
