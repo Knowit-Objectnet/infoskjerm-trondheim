@@ -98,7 +98,7 @@ fn get_forecast_today(data: &ForecastRaw) -> ForecastModel {
 }
 
 fn get_forecast_tomorrow(data: &ForecastRaw) -> ForecastModel {
-    let tomorrow = (chrono::Local::now().date_naive() + chrono::Duration::days(1))
+    let tomorrow = (chrono::Local::now().date_naive() + chrono::Duration::try_days(1).unwrap())
         .and_hms_opt(8, 0, 0)
         .unwrap();
 
