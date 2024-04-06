@@ -22,5 +22,5 @@ pub struct FromLocation {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Name {
-    pub en: String,
+    pub en: Option<String>,
 }

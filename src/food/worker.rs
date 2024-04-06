@@ -60,7 +60,7 @@ fn get_tracking_status(tracking_data: Result<WoltTracking, reqwest::Error>) -> F
             let active = tracking_data.status != "delivered";
 
             FoodTracking {
-                resturant_name: tracking_data.from_location.name.en.into(),
+                resturant_name: tracking_data.from_location.name.en.unwrap_or("Ukjent sted".to_string()).into(),
                 status: tracking_data.status.into(),
                 minutes_remaining,
                 active,
