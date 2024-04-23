@@ -7,7 +7,7 @@ use chrono::{ DateTime, Local, Locale, NaiveDateTime, TimeZone};
 use ical::parser::ical::component::IcalEvent;
 use log::{debug, error};
 use slint::{VecModel, Weak};
-use std::{rc::Rc, thread};
+use std::{cmp::min, rc::Rc, thread};
 
 const CAL_URL: &str ="https://outlook.office365.com/owa/calendar/4ccddc187e214383b2914f75061813b6@knowit.no/06d7c824a8c0401a9d0519fbccb7d29d8889045414010058404/calendar.ics";
 
@@ -47,7 +47,9 @@ async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<Calendar
             let mut upcoming_events: Vec<CalendarEvent> = calendar.into_iter().filter(|x| x.end_time >= Local::now()).collect();
             upcoming_events.sort_by(|a,b| a.start_time.cmp(&b.start_time));
 
-            for event in &upcoming_events[0..3] {
+            let take_count = min(3, upcoming_events.len());
+
+            for event in &upcoming_events[0..take_count] {
                 let date_and_start_time = event.start_time.format_localized("%-d %B %H:%M",Locale::nb_NO);
                 let end_time = event.end_time.format_localized("%H:%M", Locale::nb_NO);
                 let summary = &event.summary;

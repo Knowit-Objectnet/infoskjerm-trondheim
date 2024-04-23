@@ -11,6 +11,12 @@ export component CalendarWidget {
 
         alignment: start;
         padding-top: 1rem;
+        if (events.length == 0) : Text {
+            font-size: 1.2rem;
+            horizontal-alignment: center;
+            color: whitesmoke;
+            text: "Ingenting planlagt for øyeblikket.";
+        }
         for event in events : VerticalLayout {
             alignment: start;
             padding: 0.5rem;
