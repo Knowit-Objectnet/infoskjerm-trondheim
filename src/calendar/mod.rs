@@ -36,10 +36,7 @@ async fn calendar_worker_loop(window: Weak<MainWindow>) {
 }
 
 
-async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<CalendarEvent>) {
-    // slint::Image is not thread safe (Send), see https://slint.dev/releases/1.1.0/docs/rust/slint/struct.Image#sending-image-to-a-thread
-    
-
+async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<CalendarEvent>) {    
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let calendar_events: VecModel<Event> = VecModel::default();
@@ -133,14 +130,14 @@ pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
     let date = match NaiveDateTime::parse_from_str(&date_string, "%Y%m%dT%H%M%S") {
         Ok(datetime) => Some(datetime),
         Err(err) => { 
-            println!("Error parsing datetime: {:?}", err);
+            error!("Error parsing datetime: {:?}", err);
             None
         }
     };
 
     let local_date = match date {
         Some(date) => Local.from_local_datetime(&date),
-        None => todo!(),
+        None => chrono::LocalResult::None,
     };
 
     match local_date {
