@@ -1,0 +1,44 @@
+import { VerticalBox } from "std-widgets.slint";
+
+export struct Event {
+        summary: string,
+        date: string,
+}
+
+export component CalendarWidget {
+    in property <[Event]> events;
+    VerticalLayout {
+
+        alignment: start;
+        padding-top: 1rem;
+        Text {
+            font-size: 1.5rem;
+            horizontal-alignment: center;
+            color: #FEFBE6;
+            text: "Events";
+        }
+
+        if (events.length == 0) : Text {
+            font-size: 1.2rem;
+            horizontal-alignment: center;
+            color: #FEFBE6;
+            text: "Ingenting planlagt for øyeblikket.";
+        }
+        for event in events : VerticalLayout {
+            alignment: start;
+            padding: 0.5rem;
+            Text {
+                horizontal-alignment: center;
+                color: #FEFBE6;
+                font-size: 1.2rem;
+                text: event.summary;
+            }
+
+            Text {
+                horizontal-alignment: center;
+                color: #FEFBE6;
+                text: event.date;
+            }
+        }
+    }
+ }

@@ -4,6 +4,7 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
+import { CalendarWidget, Event } from "calendarwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
 
@@ -34,6 +35,11 @@ export component MainWindow inherits Window {
     
     };
 
+    in property <[Event]> events: [{
+        summary: "Placeholder calendar event",
+        date: "",
+    }];
+
     title: "Infoskjerm";
     //TODO: Set programmatically?
     no-frame: true;
@@ -53,6 +59,10 @@ export component MainWindow inherits Window {
 
         if foodTracking.active: FoodTrackerWidget {
             tracking: foodTracking;
+        }
+
+        CalendarWidget {
+            events: events;
         }
 
         XkcdWidget {
