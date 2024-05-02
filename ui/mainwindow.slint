@@ -11,7 +11,7 @@ import "./assets/FiraMono-Regular.ttf";
 export component MainWindow inherits Window {
     in property <string> time: "12:34:56";
     in property <string> date: "01";
-    in property <string> month: "jan" ;
+    in property <string> month: "jan";
     in property <Forecast> todayForecast: {
         temp: "-1",
         precipitation: "2",
@@ -32,7 +32,6 @@ export component MainWindow inherits Window {
         active: false,
         resturant_name: "McDonalds",
         minutes_remaining: "5",
-    
     };
 
     in property <[Event]> events: [{
@@ -43,19 +42,21 @@ export component MainWindow inherits Window {
     title: "Infoskjerm";
     //TODO: Set programmatically?
     no-frame: true;
-    width: 576px;
-    height: 1024px;
+    //width: 576px;
+    //height: 1024px;
     background: #0C0C27;
 
     default-font-family: "Bagoss";
-    
-    VerticalLayout{
+    VerticalLayout {
         width: 100%;
         padding-left: 2rem;
         padding-right: 2rem;
         alignment: space-between;
 
-        ForecastWidget { today: todayForecast; tomorrow: tomorrowForecast;}
+        ForecastWidget {
+            today: todayForecast;
+            tomorrow: tomorrowForecast;
+        }
 
         if foodTracking.active: FoodTrackerWidget {
             tracking: foodTracking;
@@ -70,30 +71,32 @@ export component MainWindow inherits Window {
             xkcd: xkcd;
         }
 
-        HorizontalLayout   {
+        HorizontalLayout {
             width: 100%;
             alignment: space-between;
-                VerticalLayout {
-                    spacing: -3px;
-                    padding-bottom: 6px;
-                    Text {
-                        font-size: 2.4rem;
-                        font-weight: 700;
-                        color: #FEFBE6;
-                        text: date;
-                    }
-                    Text {
-                        font-size: 1.1rem;
-                        color: #FEFBE6;
-                        text: month;
-                    }
-                }
+            VerticalLayout {
+                spacing: -3px;
+                padding-bottom: 6px;
                 Text {
+                    font-size: 2.4rem;
+                    font-weight: 700;
                     color: #FEFBE6;
-                    font-size: 4rem;
-                    text: time;
-                    font-family: "Fira Mono";
+                    text: date;
                 }
-            }       
+
+                Text {
+                    font-size: 1.1rem;
+                    color: #FEFBE6;
+                    text: month;
+                }
+            }
+
+            Text {
+                color: #FEFBE6;
+                font-size: 4rem;
+                text: time;
+                font-family: "Fira Mono";
+            }
+        }
     }
 }
