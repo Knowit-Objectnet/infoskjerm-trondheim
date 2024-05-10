@@ -9,9 +9,8 @@ import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
 
 export component MainWindow inherits Window {
-    in property <string> time: "12:34:56";
-    in property <string> date: "01";
-    in property <string> month: "jan";
+    in property <string> time: "12:34";
+    in property <string> date: "Mandag 5. august";
     in property <Forecast> todayForecast: {
         temp: "-1",
         precipitation: "2",
@@ -49,9 +48,24 @@ export component MainWindow inherits Window {
     default-font-family: "Bagoss";
     VerticalLayout {
         width: 100%;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        padding: 3rem;
         alignment: space-between;
+
+        HorizontalLayout {
+            width: 100%;
+            alignment: space-between;
+            Text {
+                font-size: 2rem;
+                color: #FEFBE6;
+                text: date;
+            }
+
+            Text {
+                color: #FEFBE6;
+                font-size: 2rem;
+                text: time;
+            }
+        }
 
         ForecastWidget {
             today: todayForecast;
@@ -69,34 +83,6 @@ export component MainWindow inherits Window {
         XkcdWidget {
             max-height: 30rem;
             xkcd: xkcd;
-        }
-
-        HorizontalLayout {
-            width: 100%;
-            alignment: space-between;
-            VerticalLayout {
-                spacing: -3px;
-                padding-bottom: 6px;
-                Text {
-                    font-size: 2.4rem;
-                    font-weight: 700;
-                    color: #FEFBE6;
-                    text: date;
-                }
-
-                Text {
-                    font-size: 1.1rem;
-                    color: #FEFBE6;
-                    text: month;
-                }
-            }
-
-            Text {
-                color: #FEFBE6;
-                font-size: 4rem;
-                text: time;
-                font-family: "Fira Mono";
-            }
         }
     }
 }
