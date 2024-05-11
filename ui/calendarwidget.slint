@@ -1,3 +1,5 @@
+import { Divider } from "utils.slint";
+
 export struct Event {
         summary: string,
         date: string,
@@ -31,10 +33,7 @@ component Headings {
             }
         }
 
-        Rectangle {
-            height: 1px;
-            background: #76757B;
-        }
+        Divider { }
     }
 }
 
@@ -137,6 +136,7 @@ export component CalendarWidget {
                 empty-text: "Ingenting planlagt for øyeblikket";
                 events: events;
             }
+
             EventStack {
                 width: (parent.width / 2) - (parent.spacing / 2);
                 empty-text: "Ikke implementert";
