@@ -2,10 +2,9 @@ extern crate ical;
 
 use crate::ui::*;
 
-
-use chrono::{ DateTime, Local, Locale, NaiveDateTime, TimeZone};
+use chrono::{DateTime, Local, Locale, NaiveDateTime, TimeZone};
 use ical::parser::ical::component::IcalEvent;
-use log::{debug, error};
+use log::{debug, error, info};
 use slint::{VecModel, Weak};
 use std::{cmp::min, rc::Rc, thread};
 
@@ -35,40 +34,43 @@ async fn calendar_worker_loop(window: Weak<MainWindow>) {
     }
 }
 
-
-async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<CalendarEvent>) {    
+async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<CalendarEvent>) {
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
             let calendar_events: VecModel<Event> = VecModel::default();
 
-            let mut upcoming_events: Vec<CalendarEvent> = calendar.into_iter().filter(|x| x.end_time >= Local::now()).collect();
-            upcoming_events.sort_by(|a,b| a.start_time.cmp(&b.start_time));
+            let mut upcoming_events: Vec<CalendarEvent> = calendar
+                .into_iter()
+                .filter(|x| x.end_time >= Local::now())
+                .collect();
+            upcoming_events.sort_by(|a, b| a.start_time.cmp(&b.start_time));
 
             let take_count = min(3, upcoming_events.len());
 
             for event in &upcoming_events[0..take_count] {
-                let date_and_start_time = event.start_time.format_localized("%-d %B %H:%M",Locale::nb_NO);
+                let date_and_start_time = event
+                    .start_time
+                    .format_localized("%-d %B %H:%M", Locale::nb_NO);
                 let end_time = event.end_time.format_localized("%H:%M", Locale::nb_NO);
                 let summary = &event.summary;
-                calendar_events.push( Event {
+                calendar_events.push(Event {
                     summary: summary.into(),
-                    date: format!("{0}-{1}",date_and_start_time,end_time).into()
+                    date: format!("{0}-{1}", date_and_start_time, end_time).into(),
                 });
             }
-            
+
             window.set_events(Rc::new(calendar_events).into());
         })
         .unwrap();
 }
 
 pub async fn get_current_calendar() -> Vec<CalendarEvent> {
-
     let result = fetch_calendar().await;
 
     let events = if let Ok(result) = result {
         parse_calendar(result.as_bytes()).await
     } else {
-        vec!()
+        vec![]
     };
 
     debug!("Loaded events from calendar: {:?}", events);
@@ -77,48 +79,62 @@ pub async fn get_current_calendar() -> Vec<CalendarEvent> {
 }
 
 pub async fn fetch_calendar() -> Result<String, reqwest::Error> {
-
     let response = reqwest::get(CAL_URL).await?;
 
     response.text().await
-    
 }
 
 pub async fn parse_calendar(cal_to_parse: &[u8]) -> Vec<CalendarEvent> {
-
     let reader = ical::IcalParser::new(cal_to_parse);
 
-    let mut events_unparsed: Vec<IcalEvent> = vec!();
+    let mut events_unparsed: Vec<IcalEvent> = vec![];
 
     for line in reader {
-       match line {
-            Ok(line) => for event in line.events { events_unparsed.push(event)},
-            Err(err) => error!("Error while trying to parse calender events response: {}",err),
+        match line {
+            Ok(line) => {
+                for event in line.events {
+                    events_unparsed.push(event)
+                }
+            }
+            Err(err) => error!(
+                "Error while trying to parse calender events response: {}",
+                err
+            ),
         };
     }
 
-    let mut calender_events: Vec<CalendarEvent> = vec!();
+    let mut calender_events: Vec<CalendarEvent> = vec![];
+
+    info!("Loaded {} events", events_unparsed.len());
 
     for event in events_unparsed {
-        let mut summary:Option<String> = None;
-        let mut start_time:Option<DateTime<Local>> = None;
-        let mut end_time:Option<DateTime<Local>> = None;
+        let mut summary: Option<String> = None;
+        let mut start_time: Option<DateTime<Local>> = None;
+        let mut end_time: Option<DateTime<Local>> = None;
         for property in event.properties {
             let name: &str = property.name.as_str();
             let value: String = property.value.unwrap_or(String::from(""));
 
-            if value.is_empty() {continue;}
+            debug!("{}: {}", name, value);
+
+            if value.is_empty() {
+                continue;
+            }
 
             match name {
-               "SUMMARY" => summary = Some(value),
-               "DTSTART" => start_time = parse_date(value).await,
-               "DTEND" => end_time = parse_date(value).await,
-                _ => ()
+                "SUMMARY" => summary = Some(value),
+                "DTSTART" => start_time = parse_date(value).await,
+                "DTEND" => end_time = parse_date(value).await,
+                _ => (),
             }
         }
 
         if summary.is_some() && start_time.is_some() && end_time.is_some() {
-            calender_events.push(CalendarEvent {summary: summary.unwrap(), start_time: start_time.unwrap(), end_time: end_time.unwrap()})
+            calender_events.push(CalendarEvent {
+                summary: summary.unwrap(),
+                start_time: start_time.unwrap(),
+                end_time: end_time.unwrap(),
+            })
         }
     }
 
@@ -126,11 +142,10 @@ pub async fn parse_calendar(cal_to_parse: &[u8]) -> Vec<CalendarEvent> {
 }
 
 pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
-    
     let date = match NaiveDateTime::parse_from_str(&date_string, "%Y%m%dT%H%M%S") {
         Ok(datetime) => Some(datetime),
-        Err(err) => { 
-            error!("Error parsing datetime: {:?}", err);
+        Err(err) => {
+            error!("Error parsing datetime: {} - {:?}", date_string, err);
             None
         }
     };
@@ -145,5 +160,4 @@ pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
         chrono::LocalResult::Single(a) => Some(a),
         chrono::LocalResult::Ambiguous(a, _) => Some(a),
     }
-
 }

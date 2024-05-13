@@ -35,7 +35,7 @@ export component MainWindow inherits Window {
 
     in property <[Event]> events: [{
         summary: "Placeholder calendar event",
-        date: "",
+        date: "31. April",
     }];
 
     title: "Infoskjerm";
@@ -78,6 +78,7 @@ export component MainWindow inherits Window {
 
         CalendarWidget {
             events: events;
+            meetings: [];
         }
 
         XkcdWidget {

@@ -1,44 +1,147 @@
-import { VerticalBox } from "std-widgets.slint";
+import { Divider } from "utils.slint";
 
 export struct Event {
         summary: string,
         date: string,
 }
 
-export component CalendarWidget {
-    in property <[Event]> events;
+component Headings {
     VerticalLayout {
-
-        alignment: start;
-        padding-top: 1rem;
+        padding-bottom: 29px;
+        spacing: 32px;
         Text {
-            font-size: 1.5rem;
-            horizontal-alignment: center;
+            font-size: 4rem;
+            height: 5rem;
             color: #FEFBE6;
-            text: "Events";
+            text: "Kalender";
         }
 
-        if (events.length == 0) : Text {
-            font-size: 1.2rem;
-            horizontal-alignment: center;
-            color: #FEFBE6;
-            text: "Ingenting planlagt for øyeblikket.";
-        }
-        for event in events : VerticalLayout {
-            alignment: start;
-            padding: 0.5rem;
+        HorizontalLayout {
+            spacing: 56px;
             Text {
-                horizontal-alignment: center;
+                width: (parent.width / 2) - (parent.spacing / 2);
+                font-size: 2.5rem;
                 color: #FEFBE6;
-                font-size: 1.2rem;
-                text: event.summary;
+                text: "Events";
             }
 
             Text {
-                horizontal-alignment: center;
+                width: (parent.width / 2) - (parent.spacing / 2);
+                font-size: 2.5rem;
                 color: #FEFBE6;
-                text: event.date;
+                text: "Møterom";
+            }
+        }
+
+        Divider { }
+    }
+}
+
+component EventCell {
+    in property <Event> event: {
+        summary: "Før timer Før timerFør timer Før timer Før timer",
+        date: "31. April",
+    };
+    Rectangle {
+        background: #1F0D8D;
+        border-radius: 32px;
+        // width: 628px;
+        // height: 128px;
+        HorizontalLayout {
+            padding-top: 24px;
+            padding-right: 32px;
+            padding-bottom: 24px;
+            padding-left: 32px;
+            spacing: 32px;
+            VerticalLayout {
+                alignment: center;
+                Image {
+                    height: 3rem;
+                    width: 3rem;
+                    source: @image-url("../img/calendar/time.png");
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                spacing: 6px;
+                // Må sette bredde for at clipping skal fungere
+                // Bredde - ikon - padding høyre/venstre - spacing
+                width: parent.width - 3rem - 3 * 32px;
+                Text {
+                    color: #CFCFFF;
+                    font-size: 2.875rem;
+                    text: event.summary;
+                }
+
+                Text {
+                    color: #CFCFFF;
+                    font-size: 2rem;
+                    text: event.date;
+                }
             }
         }
     }
- }
+}
+
+component EventStack {
+    in property <[Event]> events;
+    in property <string> empty-text;
+    if (events.length == 0): Text {
+        width: parent.width;
+        font-size: 2rem;
+        horizontal-alignment: center;
+        color: #FEFBE6;
+        text: empty-text;
+    }
+    if (events.length > 0): VerticalLayout {
+        spacing: 24px;
+        alignment: start;
+        width: parent.width;
+        for event in events: EventCell {
+            event: event;
+        }
+    }
+}
+
+export component CalendarWidget {
+    in property <[Event]> events: [
+        {
+            summary: "Lønningspils",
+            date: "31. april",
+            icon: @image-url("../img/calendar/time.png"),
+        },
+        {
+            summary: "Før timer",
+            date: "31. april",
+            icon: @image-url("../img/calendar/time.png"),
+        }
+    ];
+    in property <[Event]> meetings: [
+        {
+            summary: "Lønningspils",
+            date: "31. april",
+            icon: @image-url("../img/calendar/time.png"),
+        }
+    ];
+    VerticalLayout {
+        alignment: start;
+        padding-top: 1rem;
+        Headings { }
+
+        HorizontalLayout {
+            spacing: 56px;
+            EventStack {
+                width: (parent.width / 2) - (parent.spacing / 2);
+                empty-text: "Ingenting planlagt for øyeblikket";
+                events: events;
+            }
+
+            EventStack {
+                width: (parent.width / 2) - (parent.spacing / 2);
+                empty-text: "Ikke implementert";
+                events: meetings;
+            }
+        }
+    }
+}
