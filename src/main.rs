@@ -1,6 +1,6 @@
 extern crate chrono;
 
-use chrono::Local;
+use chrono::{Local, Locale};
 use log::info;
 use rust_embed::RustEmbed;
 use slint::{PlatformError, Timer, TimerMode};
@@ -40,12 +40,18 @@ fn main() -> Result<(), PlatformError> {
         move || {
             let ui = clock_handle.unwrap();
             let now = Local::now();
-            let datestring = std::format!("{}", now.format("%H:%M:%S"));
-            let date = now.format("%d").to_string().into();
-            let month = now.format("%b").to_string().to_uppercase().into();
-            ui.set_time(datestring.into());
-            ui.set_month(month);
-            ui.set_date(date);
+            let time = now.format("%H:%M").to_string();
+            let mut date = now.format_localized("%A %e. %B", Locale::nb_NO).to_string();
+
+            // Norske dager har ikke stor forbokstav, men vi ønsker det siden det
+            // er første ordet i en "setning"
+            if let Some(ch) = date.chars().next() {
+                let capitalized = ch.to_uppercase().to_string();
+                date.replace_range(..1, capitalized.as_str());
+            }
+
+            ui.set_time(time.into());
+            ui.set_date(date.into());
         },
     );
 
