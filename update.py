@@ -13,6 +13,12 @@ release_json = response.json()
 version = release_json.get("tag_name")
 print(f"Downloaded version: {version}")
 
+# Check against running version
+with open("VERSION", "w+") as file:
+    if version == file.read():
+        print("No new version")
+        exit(0)
+
 # Step 2: Get the "browser_download_url" from the assets
 assets = release_json.get("assets", [])
 if len(assets) == 0:
@@ -36,6 +42,10 @@ if response.status_code != 200:
 
 with open(filename, "wb") as file:
     file.write(response.content)
+
+# Update running version
+with open("VERSION", "w+") as file:
+    file.write(version)
 
 # Step 5: Chmod +X the file
 os.chmod(filename, 0o755)
