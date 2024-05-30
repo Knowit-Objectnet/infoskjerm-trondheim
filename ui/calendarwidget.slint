@@ -18,18 +18,22 @@ component Headings {
 
         HorizontalLayout {
             spacing: 56px;
-            Text {
-                width: (parent.width / 2) - (parent.spacing / 2);
-                font-size: 2.5rem;
-                color: #FEFBE6;
-                text: "Events";
+            Rectangle {
+                Text {
+                    font-size: 2.5rem;
+                    color: #FEFBE6;
+                    text: "Events";
+                    x: 0;
+                }
             }
 
-            Text {
-                width: (parent.width / 2) - (parent.spacing / 2);
-                font-size: 2.5rem;
-                color: #FEFBE6;
-                text: "Møterom";
+            Rectangle {
+                Text {
+                    x: 0;
+                    font-size: 2.5rem;
+                    color: #FEFBE6;
+                    text: "Møterom";
+                }
             }
         }
 
@@ -88,16 +92,15 @@ component EventStack {
     in property <[Event]> events;
     in property <string> empty-text;
     if (events.length == 0): Text {
-        width: parent.width;
         font-size: 2rem;
         horizontal-alignment: center;
         color: #FEFBE6;
         text: empty-text;
+        y: 0;
     }
     if (events.length > 0): VerticalLayout {
         spacing: 24px;
         alignment: start;
-        width: parent.width;
         for event in events: EventCell {
             event: event;
         }
@@ -131,14 +134,13 @@ export component CalendarWidget {
 
         HorizontalLayout {
             spacing: 56px;
+            height: 460px;
             EventStack {
-                width: (parent.width / 2) - (parent.spacing / 2);
                 empty-text: "Ingenting planlagt for øyeblikket";
                 events: events;
             }
 
             EventStack {
-                width: (parent.width / 2) - (parent.spacing / 2);
                 empty-text: "Ikke implementert";
                 events: meetings;
             }
