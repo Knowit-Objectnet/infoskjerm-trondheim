@@ -64,29 +64,19 @@ jobs:
             cargo install cargo-zigbuild
         fi
 
-    - name: Build
-      run: cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
-
+    - name: Build and tar
+      run: |
+        cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
+        chmod +x ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
+        tar -czvf infoskjerm.tar.gz update.py \
+          -C ./target/armv7-unknown-linux-gnueabihf/release infoskjerm
+    
     - name: Create Release
-      if: ${{ !github.event.inputs.dry_run || github.event.inputs.dry_run == 'false' }}
-      id: create_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: actions/create-release@v1
+      if: ${{ ! inputs.dry_run }}
+      uses: softprops/action-gh-release@v2
       with:
+        files: infoskjerm.tar.gz
+        make_latest: "true"
+        generate_release_notes: true
+        name: Release ${{ github.event.inputs.tag || github.ref }}
         tag_name: ${{ github.event.inputs.tag || github.ref }}
-        release_name: Release ${{ github.event.inputs.tag || github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      if: ${{ !github.event.inputs.dry_run || github.event.inputs.dry_run == 'false' }}
-      id: upload-release-asset 
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
-        asset_name: infoskjerm
-        asset_content_type: application/zip
