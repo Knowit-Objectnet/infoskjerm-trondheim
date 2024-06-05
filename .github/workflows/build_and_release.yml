@@ -67,7 +67,7 @@ jobs:
     - name: Build and tar
       run: |
         cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
-        chmod +x ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
+        chmod 777 ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
         tar -czvf infoskjerm.tar.gz update.py \
           -C ./target/armv7-unknown-linux-gnueabihf/release infoskjerm
     
