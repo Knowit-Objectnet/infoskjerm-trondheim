@@ -6,6 +6,8 @@ import io
 import subprocess
 import tarfile
 
+from pathlib import Path
+
 # Step 1: Get the latest release JSON
 response = requests.get(
     "https://api.github.com/repos/Knowit-Objectnet/infoskjerm-trondheim/releases/latest")
@@ -16,7 +18,9 @@ version = release_json.get("tag_name")
 print(f"Downloaded version: {version}")
 
 # Check against running version
-with open("VERSION", "w+") as file:
+p = Path("VERSION")
+p.touch()
+with open(p, "r") as file:
     if version == file.read():
         print("No new version")
         exit(0)
