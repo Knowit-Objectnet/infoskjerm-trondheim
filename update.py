@@ -3,6 +3,7 @@
 
 import requests
 import io
+import time
 import subprocess
 import tarfile
 
@@ -43,6 +44,7 @@ if response.status_code != 200:
 
 # Step 3: Kill the already running process by name
 subprocess.run(["pkill", "infoskjerm"])
+time.sleep(2)   # Wait for process to exit. MagicNumber!
 
 # Step 4: Unpack update
 tarlike = io.BytesIO(response.content)
