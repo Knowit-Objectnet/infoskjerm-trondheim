@@ -27,7 +27,7 @@ jobs:
         key: ${{ runner.os }}-cargo-build-target-foo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Build
-      run: cargo build --release
+      run: cargo build --release --features selfie
 
     - name: Hide Dock
       run: defaults write com.apple.dock autohide -bool true && killall Dock
