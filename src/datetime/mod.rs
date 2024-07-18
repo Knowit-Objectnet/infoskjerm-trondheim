@@ -3,7 +3,6 @@ use chrono::{Local, Locale};
 use slint::{Timer, TimerMode};
 
 pub fn setup(main_window: &MainWindow) -> Timer {
-
     let clock_timer = Timer::default();
     let clock_handle = main_window.as_weak();
 
@@ -22,7 +21,6 @@ pub fn setup(main_window: &MainWindow) -> Timer {
                 let capitalized = ch.to_uppercase().to_string();
                 date.replace_range(..1, capitalized.as_str());
             }
-
             ui.set_time(time.into());
             ui.set_date(date.into());
         },
@@ -30,5 +28,4 @@ pub fn setup(main_window: &MainWindow) -> Timer {
 
     // We return the timer to prevent it from being dropped
     clock_timer
-
 }

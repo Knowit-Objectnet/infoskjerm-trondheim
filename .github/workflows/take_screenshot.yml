@@ -34,19 +34,8 @@ jobs:
 
     - name: Run and take screenshot
       run: |
-        cargo run --release > cargo.log 2>&1 &
+        cargo run --release --features selfie > cargo.log 2>&1 &
         sleep 5
-        cat cargo.log
-        osascript -e 'tell application "System Events" to tell process "infoskjerm" to set position of window 1 to {0, 0}'
-        window_info=$(osascript -e 'tell application "System Events" to tell process "infoskjerm" to get {position, size} of window 1')
-        x=$(echo $window_info | cut -d, -f1)
-        y=$(echo $window_info | cut -d, -f2)
-        w=$(echo $window_info | cut -d, -f3)
-        h=$(echo $window_info | cut -d, -f4)
-
-        rectangle="${x},${y},${w},${h}"
-        rectangle=$(echo $rectangle | tr -d ' ')
-        screencapture -R$rectangle screenshot.png
         screencapture fullscreen.png
 
 
