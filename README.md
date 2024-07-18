@@ -2,7 +2,7 @@
 
 Infoskjerm for Trondheimkontoret, skrive i [Rust](https://www.rust-lang.org/), med [Slint](https://slint.dev/).
 
-![](screenshot.png)
+<img src="screenshot.png" width="500"/>
 
 ## Kom i gang!
 * [Installer Rust](https://www.rust-lang.org/tools/install)
