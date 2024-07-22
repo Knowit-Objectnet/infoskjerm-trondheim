@@ -24,6 +24,7 @@ env_logger = "0.10.1"
 tokio = { version = "1.35.1", features = ["rt-multi-thread"] }
 tide = "0.16.0"
 ical = "0.10"
+i-slint-backend-testing = "1.7.0"
 
 [build-dependencies]
 slint-build = "1.7.0"

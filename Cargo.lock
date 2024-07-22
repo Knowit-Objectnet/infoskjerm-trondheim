@@ -2459,6 +2459,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "i-slint-backend-testing"
+version = "1.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64fa385f1ef6089bacc92275853878491e8073cb8a383a8577a48451c690a879"
+dependencies = [
+ "i-slint-core",
+ "vtable",
+]
+
+[[package]]
 name = "i-slint-backend-winit"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2790,6 +2800,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "env_logger",
+ "i-slint-backend-testing",
  "ical",
  "image 0.24.9",
  "log",
