@@ -18,8 +18,8 @@ pub fn grab_selfie(main_window: &MainWindow) -> Timer {
         move || {
             let ui = sc_handle.unwrap();
             ui.window().request_redraw();
-            let foo = ui.window().take_snapshot().unwrap();
-            save_screenshot(foo);
+            let pixel_buffer = ui.window().take_snapshot().unwrap();
+            save_screenshot(pixel_buffer);
         },
     );
 
@@ -28,10 +28,11 @@ pub fn grab_selfie(main_window: &MainWindow) -> Timer {
 
 #[cfg(feature = "selfie")]
 fn save_screenshot(screenshot: SharedPixelBuffer<Rgba8Pixel>) {
+    use log::info;
+
     let (width, height) = (screenshot.width(), screenshot.height());
     let raw_pixels: &[u8] = screenshot.as_bytes();
 
-    // Create an ImageBuffer from the raw pixel data
     let img = ImageBuffer::<Rgba<u8>, _>::from_raw(width, height, raw_pixels)
         .ok_or_else(|| {
             ImageError::Parameter(ParameterError::from_kind(
@@ -40,6 +41,6 @@ fn save_screenshot(screenshot: SharedPixelBuffer<Rgba8Pixel>) {
         })
         .unwrap();
 
-    println!("Taking screenshot!");
+    info!("Taking screenshot!");
     let _ = img.save("screenshot.png");
 }
