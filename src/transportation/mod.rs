@@ -1,23 +1,28 @@
-use reqwest;
-use reqwest::header;
-use graphql_client::{GraphQLQuery, Response};
 use std::error::Error;
 use std::rc::Rc;
 use std::thread;
-use chrono::DateTime as ChronoDateTime;
-use slint::{ComponentHandle, SharedString, VecModel, Weak};
-use crate::transportation::stop_place::{ResponseData, StopPlaceStopPlace};
+
+use chrono::{Local, TimeDelta, Utc};
+use graphql_client::{GraphQLQuery, Response};
+use reqwest;
+use reqwest::header;
+use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, SharedString, VecModel, Weak};
+use query::Variables;
+use crate::StaticAssets;
+use crate::transportation::query::{QueryStopPlace, QueryStopPlaceQuays, ResponseData, TransportMode};
 use crate::ui::{MainWindow, StopPlaceData, StopPlaceDataRow};
 
 const BASE_URL: &str = "https://api.entur.io/journey-planner/v3/graphql";
 // https://developer.entur.org/pages-intro-authentication
 const ET_CLIENT: &str = "knowit-objectnet-trd-infoscreen";
-const HAAKON_VII_GATE: &str = "NSR:StopPlace:42310";
+const PRINSENS_GATE: &str = "NSR:StopPlace:41613";
+const PRINSENS_GATE_P1: &str = "NSR:Quay:71184";
+const PRINSENS_GATE_P2: &str = "NSR:Quay:71181";
 const DEFAULT_TIME_RANGE: i64 = 72100;
 const DEFAULT_NUMBER_OF_DEPARTURES: i64 = 10;
 
 type Date = String;
-type DateTime = String;
+type DateTime = chrono::DateTime<Utc>;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -25,7 +30,7 @@ type DateTime = String;
     query_path = "src/resources/journey-planner_query.graphql",
     response_derives = "Debug"
 )]
-struct StopPlace;
+struct Query;
 
 
 pub fn setup(window: &MainWindow) {
@@ -51,48 +56,78 @@ async fn transportation_worker_loop(window: Weak<MainWindow>) {
     }
 }
 
-fn display_transportation(window_weak: &Weak<MainWindow>, stop_place: StopPlaceStopPlace) {
+fn display_transportation(window_weak: &Weak<MainWindow>, stop_place: QueryStopPlace) {
     
     window_weak
         .upgrade_in_event_loop(move |window: MainWindow| {
 
-            let transport_mode = stop_place
-                .estimated_calls.get(0).unwrap()
-                .service_journey.journey_pattern.as_ref().unwrap()
-                .line.transport_mode.as_ref().unwrap();
-
-            let public_code = stop_place
-                .estimated_calls.get(0).unwrap()
-                .service_journey.journey_pattern.as_ref().unwrap()
-                .line.public_code.as_ref().unwrap();
-            
-            let destination_front_text = stop_place
-                .estimated_calls.get(0).unwrap()
-                .destination_display.as_ref().unwrap()
-                .front_text.as_ref().unwrap();
-            
-            let aimed_departure_time = &stop_place
-                .estimated_calls.get(0).unwrap()
-                .aimed_departure_time;
-
-            let custom_format = aimed_departure_time.as_str();
-            //let custom_format_2 = aimed_departure_time.fmt();
-            
-            println!("{:#?}", destination_front_text);
-            
             let stop_place_data_rows: VecModel<StopPlaceDataRow> = VecModel::default();
-
-            let stop_place_data_row = StopPlaceDataRow {
-                transportMode: SharedString::from("bus"),
-                publicCode: SharedString::from(public_code),
-                destinationFrontText: SharedString::from(destination_front_text),
-                aimedDepartureTime: SharedString::from(custom_format),
+            
+            let quays: Vec<QueryStopPlaceQuays> = match stop_place.quays {
+                None => panic!("No quays for this stop."),
+                Some(quays) => quays.into_iter().map(|quay| match quay {
+                    None => panic!("No data in Quay."),
+                    Some(quay) => quay
+                }).collect()
             };
             
-            stop_place_data_rows.push(stop_place_data_row);
+            let filtered_quays_option = quays
+                .into_iter()
+                .find(|quay| quay.id == PRINSENS_GATE_P1);
+            
+            let quay = match filtered_quays_option {
+                None => panic!("No quay with this ID."),
+                Some(quay) => quay
+            };
+            
+            for estimated_call in quay.estimated_calls {
+                
+                let transport_mode = match &estimated_call.service_journey.journey_pattern {
+                    None => continue,
+                    Some(journey_pattern) => {
+                        match &journey_pattern.line.transport_mode {
+                            None => continue,
+                            Some(transport_mode) => {
+                                transport_mode
+                            }
+                        }
+                    }
+                };
+                
+
+                let public_code = estimated_call
+                    .service_journey.journey_pattern.as_ref().unwrap()
+                    .line.public_code.as_ref().unwrap();
+
+                let destination_front_text = estimated_call
+                    .destination_display.as_ref().unwrap()
+                    .front_text.as_ref().unwrap();
+
+                let aimed_departure_time = estimated_call
+                    .aimed_departure_time;
+
+                let Some(v) = format_departure_time(aimed_departure_time) else { continue };
+                println!("v = {v}");
+                
+                let custom_format = match format_departure_time(aimed_departure_time) {
+                    None => continue,
+                    Some(value) => value,
+                };
+
+                println!("{:#?}", destination_front_text);
+
+                let stop_place_data_row = StopPlaceDataRow {
+                    transportMode: get_icon(transport_mode.as_str()),
+                    publicCode: SharedString::from(public_code),
+                    destinationFrontText: SharedString::from(destination_front_text),
+                    aimedDepartureTime: SharedString::from(custom_format),
+                };
+
+                stop_place_data_rows.push(stop_place_data_row);
+            }
             
             let stop_place_data = StopPlaceData {
-                stopName: SharedString::from(stop_place.name),
+                stopName: SharedString::from(format!("{} {}", quay.name, quay.public_code.unwrap_or(String::from("")))),
                 stopDataRows: Rc::new(stop_place_data_rows).into()
             };
 
@@ -111,13 +146,13 @@ pub async fn get_stop_place() -> Result<ResponseData, Box<dyn Error>> {
     headers.insert("Accept", header::HeaderValue::from_static("application/json"));
     headers.insert("ET-Client-Name",header::HeaderValue::from_static(ET_CLIENT));
 
-    let variables = stop_place::Variables {
-        id: HAAKON_VII_GATE.to_string(),
+    let variables = Variables {
+        id: PRINSENS_GATE.to_string(),
         time_range: Some(DEFAULT_TIME_RANGE),
         number_of_departures: Some(DEFAULT_NUMBER_OF_DEPARTURES),
     };
     
-    let request_body = StopPlace::build_query(variables);
+    let request_body = Query::build_query(variables);
     
     let client = reqwest::Client::new();
 
@@ -131,4 +166,57 @@ pub async fn get_stop_place() -> Result<ResponseData, Box<dyn Error>> {
     println!("{:#?}", response_body);
 
     Ok(response_body.data.expect("Missing response data"))
+}
+
+pub fn format_departure_time(departure_time: DateTime) -> Option<String> {
+    let local_now = Local::now();
+    let local_departure_time = departure_time.with_timezone(&Local);
+
+    let time_delta = local_departure_time.signed_duration_since(local_now);
+
+    return
+    if time_delta < TimeDelta::zero() {
+        None
+    } else if time_delta < TimeDelta::minutes(1) {
+        Some(String::from("Nå"))
+    } else if time_delta < TimeDelta::minutes(10) {
+        Some(format!("{} min", time_delta.num_minutes()))
+    } else {
+        Some(format!("{}", local_departure_time.format("%H:%M")))
+    }
+}
+
+fn get_icon(icon_name: &str) -> Image {
+    let icon_path = std::format!("transport/{}.png", icon_name);
+    let icon_data = match StaticAssets::get(&icon_path) {
+        Some(icon_data) => icon_data.data.into_owned(),
+        None => StaticAssets::get("not-found.png")
+            .unwrap()
+            .data
+            .into_owned(),
+    };
+
+    let transport_icon = image::load_from_memory_with_format(&icon_data, image::ImageFormat::Png)
+        .unwrap()
+        .into_rgba8();
+
+    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+        transport_icon.as_raw(),
+        transport_icon.width(),
+        transport_icon.height(),
+    );
+
+    Image::from_rgba8(buffer)
+}
+
+
+impl TransportMode {
+    fn as_str(&self) -> &'static str {
+        match self {
+            TransportMode::bus => "bus",
+            TransportMode::tram => "tram",
+            TransportMode::rail => "rail",
+            _ => "unknown"
+        }
+    }
 }

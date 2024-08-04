@@ -1,5 +1,5 @@
 export struct StopPlaceDataRow {
-    transportMode: string,
+    transportMode: image,
     publicCode: string,
     destinationFrontText: string,
     aimedDepartureTime: string,
@@ -15,11 +15,11 @@ component StopPlaceRow {
 
     HorizontalLayout {
         spacing: 1.5rem;
-        alignment: center;
-        Text {
-            font-size: 3rem;
-            text: stopPlaceDataRow.transportMode;
-            color: whitesmoke;
+        alignment: start;
+        Image {
+            max-height: 8.75rem;
+            max-width: 8.75rem;
+            source: stopPlaceDataRow.transportMode;
         }
         Text {
             font-size: 3rem;
