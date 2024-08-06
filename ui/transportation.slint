@@ -1,3 +1,5 @@
+import { Divider } from "utils.slint";
+import { StandardTableView } from "std-widgets.slint";
 export struct StopPlaceDataRow {
     transportMode: image,
     publicCode: string,
@@ -10,50 +12,60 @@ export struct StopPlaceData {
     stopDataRows: [StopPlaceDataRow]
 }
 
-component StopPlaceRow {
+component DisplayRow {
     in property <StopPlaceDataRow> stopPlaceDataRow;
 
-    HorizontalLayout {
-        spacing: 1.5rem;
-        alignment: start;
-        Image {
-            max-height: 8.75rem;
-            max-width: 8.75rem;
-            source: stopPlaceDataRow.transportMode;
-        }
-        Text {
-            font-size: 3rem;
-            text: stopPlaceDataRow.publicCode;
-            color: whitesmoke;
-        }
-        Text {
-            font-size: 3rem;
-            text: stopPlaceDataRow.destinationFrontText;
-            color: whitesmoke;
-        }
-        Text {
-            font-size: 3rem;
-            text: stopPlaceDataRow.aimedDepartureTime;
-            color: yellow;
-        }
+    VerticalLayout {
+
+        HorizontalLayout {
+                alignment: start;
+                padding-top: 0.5rem;
+
+                Image {
+                    height: 1.5rem;
+                    width: 7.5%;
+                    source: stopPlaceDataRow.transportMode;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 7.5%;
+                    text: stopPlaceDataRow.publicCode;
+                    color: whitesmoke;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 65%;
+                    text: stopPlaceDataRow.destinationFrontText;
+                    color: whitesmoke;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 20%;
+                    text: stopPlaceDataRow.aimedDepartureTime;
+                    color: whitesmoke;
+                }
+            }
+
+        Divider {}
     }
 }
 
-component StopPlaceColumn {
+component DisplayColumn {
     in property <StopPlaceData> stopPlaceData;
 
     VerticalLayout {
-        alignment: start;
-        padding-top: 2rem;
 
         Text {
             color: whitesmoke;
-            font-size: 4rem;
+            font-size: 2rem;
             text: stopPlaceData.stopName;
-            horizontal-alignment: center;
+            horizontal-alignment: left;
+            padding-bottom: 1rem;
         }
 
-        for stopPlaceRow in stopPlaceData.stopDataRows : StopPlaceRow {
+        Divider {}
+
+        for stopPlaceRow in stopPlaceData.stopDataRows : DisplayRow {
             stopPlaceDataRow: stopPlaceRow;
         }
     }
@@ -62,9 +74,20 @@ component StopPlaceColumn {
 export component TransportationWidget{
     in property <[StopPlaceData]> stopPlacesData;
 
-    HorizontalLayout {
-        for stopPlace in stopPlacesData : StopPlaceColumn {
-            stopPlaceData: stopPlace;
+    VerticalLayout {
+        Text {
+            color: whitesmoke;
+            font-size: 3rem;
+            text: "Busstider";
+            horizontal-alignment: left;
+        }
+
+        HorizontalLayout {
+            padding-top: 1rem;
+
+            for stopPlace in stopPlacesData : DisplayColumn {
+                stopPlaceData: stopPlace;
+            }
         }
     }
 }

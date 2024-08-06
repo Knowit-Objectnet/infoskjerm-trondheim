@@ -1,4 +1,4 @@
-query Query($id: String!, $timeRange: Int, $numberOfDepartures: Int) {
+query Query($id: String!, $numberOfDepartures: Int) {
     stopPlace(id: $id) {
         id
         name
@@ -6,7 +6,7 @@ query Query($id: String!, $timeRange: Int, $numberOfDepartures: Int) {
             id
             name
             publicCode
-            estimatedCalls(timeRange: $timeRange, numberOfDepartures: $numberOfDepartures) {
+            estimatedCalls(numberOfDepartures: $numberOfDepartures) {
                 realtime
                 aimedArrivalTime
                 aimedDepartureTime
