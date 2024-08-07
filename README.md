@@ -29,12 +29,12 @@ GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint
 * Vær
 * Klokke og dato
 * Matsporing via Wolt
+* Busstider
+* Aktivitetskalender
 
 ## Idear til funksjonalitet
-* Busstider
 * Møteromsstatus
-* Tracking av wolt/foodora
-* Aktivitetskalender
+* Matsporing fra Foodora
 * AI assistent: For *GPT med data og kontekst, dato, kalender, vær etc etc og be den gi råd for morgendagen eller lignende.
 * Bursdager 🎉
 * Dagens visdomsord/quote
@@ -43,7 +43,6 @@ GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint
 * Andre comics?
 
 ## Andre tanker
-* Designløft! Kan vi få den kul/fin?
 * Koderydding
 * Feilhåndtering
 * Fikse minnelekkasje?
