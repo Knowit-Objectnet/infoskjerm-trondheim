@@ -8,6 +8,7 @@ use std::thread;
 
 use chrono::{Local, TimeDelta, Utc};
 use graphql_client::{GraphQLQuery, Response};
+use log::{debug, info};
 use reqwest;
 use reqwest::header;
 use slint::{ComponentHandle, Image, Rgba8Pixel, SharedPixelBuffer, SharedString, VecModel, Weak};
@@ -21,6 +22,7 @@ const BASE_URL: &str = "https://api.entur.io/journey-planner/v3/graphql";
 // https://developer.entur.org/pages-intro-authentication
 const ET_CLIENT: &str = "knowit-objectnet-trd-infoscreen";
 const DEFAULT_NUMBER_OF_DEPARTURES: i64 = 8;
+const POLLING_TIME: u64 = 60; // In seconds
 
 type Date = String;
 type DateTime = chrono::DateTime<Utc>;
@@ -55,12 +57,12 @@ async fn transportation_worker_loop(window: Weak<MainWindow>) {
                         Ok(response) => match response.stop_place {
                             Some(stop_place) => stop_place,
                             None => {
-                                println!("No stop places returned from server. Check if the StopPlace-ID exists.");
+                                info!("No stop places returned from server. Check if the StopPlace-ID exists.");
                                 continue
                             }
                         }
                         Err(_) => {
-                            println!("Error from server. Check query.");
+                            info!("Error from server. Check query.");
                             continue
                         }
                     };
@@ -68,7 +70,7 @@ async fn transportation_worker_loop(window: Weak<MainWindow>) {
                     // Filter on tracked quays and lines
                     let filtered_quays = match filter_by_quays_and_lines(stop_place, tracked_stop) {
                         None => {
-                            println!("No quays left after filtering. Check if Quay-IDs exist on this StopPlace.");
+                            info!("No quays left after filtering. Check if Quay-IDs exist on this StopPlace.");
                             continue
                         },
                         Some(filtered_quays) => filtered_quays
@@ -80,11 +82,11 @@ async fn transportation_worker_loop(window: Weak<MainWindow>) {
                 display_transportation(&window, all_filtered_quays);
             }
             Err(_) => {
-                println! { "Unable to read file containing tracked stops information." }
+                info! { "Unable to read file containing tracked stops information." }
             }
         };
         
-        tokio::time::sleep(std::time::Duration::from_secs(60 * 60)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(POLLING_TIME)).await;
     }
 }
 
@@ -97,13 +99,13 @@ fn display_transportation(window: &Weak<MainWindow>, filtered_quays: Vec<QuerySt
             let quay_name = quay.name;
             let quay_public_code = quay.public_code.unwrap_or(String::from(""));
             
-            println!("Processing quay {} {}", quay_name, quay_public_code);
+            debug!("Processing quay {} {}", quay_name, quay_public_code);
             let stop_place_data_rows: VecModel<StopPlaceDataRow> = VecModel::default();
 
             for estimated_call in quay.estimated_calls {
                 match extract_relevant_values(estimated_call) {
                     None => {
-                        println!("Unable to extract values from estimated call. Skipping.");
+                        info!("Unable to extract values from estimated call. Skipping.");
                         continue
                     }
                     Some(row) => stop_place_data_rows.push(row)
@@ -137,7 +139,7 @@ fn read_tracked_stops() -> Result<TrackedStops, Box<dyn Error>> {
 fn filter_by_quays_and_lines(query_stop_place: QueryStopPlace, tracked_stop: TrackedStop) -> Option<Vec<QueryStopPlaceQuays>> {
     let all_query_quays: Vec<QueryStopPlaceQuays> = match query_stop_place.quays {
         None => {
-            println!("No quays for stop with ID {}", query_stop_place.id);
+            info!("No quays for stop with ID {}", query_stop_place.id);
             return None
         },
         Some(quays) => quays.into_iter().flatten().collect::<Vec<QueryStopPlaceQuays>>()
@@ -163,13 +165,13 @@ fn filter_by_quays_and_lines(query_stop_place: QueryStopPlace, tracked_stop: Tra
 fn extract_relevant_values(estimated_call: QueryStopPlaceQuaysEstimatedCalls) -> Option<StopPlaceDataRow> {
     let transport_mode = match &estimated_call.service_journey.journey_pattern {
         None => {
-            println!("No journey pattern found for service journey '{}'", estimated_call.service_journey.public_code.unwrap_or(String::from("unknown")));
+            info!("No journey pattern found for service journey '{}'", estimated_call.service_journey.public_code.unwrap_or(String::from("unknown")));
             return None;
         },
         Some(journey_pattern) => {
             match &journey_pattern.line.transport_mode {
                 None => {
-                    println!("No transport mode found for line '{}'", journey_pattern.line.id);
+                    info!("No transport mode found for line '{}'", journey_pattern.line.id);
                     return None
                 },
                 Some(transport_mode) => {
@@ -191,20 +193,25 @@ fn extract_relevant_values(estimated_call: QueryStopPlaceQuaysEstimatedCalls) ->
         .front_text.as_ref().unwrap();
 
     let aimed_departure_time = estimated_call.aimed_departure_time;
+    
+    let expected_departure_time = estimated_call.expected_departure_time;
 
-    let custom_format = match format_departure_time(aimed_departure_time) {
+    let departure_time_formatted = match format_departure_time(expected_departure_time) {
         None => {
-            println!("Unable to format departure time: {}", aimed_departure_time.to_string());
+            info!("Unable to format departure time: {}", aimed_departure_time.to_string());
             return None
         },
         Some(value) => value,
     };
+    
+    let realtime = estimated_call.realtime;
 
     let stop_place_data_row = StopPlaceDataRow {
         transportMode: get_icon(transport_mode.as_str()),
         publicCode: SharedString::from(public_code),
         destinationFrontText: SharedString::from(destination_front_text),
-        aimedDepartureTime: SharedString::from(custom_format),
+        departureTime: SharedString::from(departure_time_formatted),
+        realtime: realtime,
     };
     
     return Some(stop_place_data_row)
@@ -232,7 +239,7 @@ async fn get_stop_place(tracked_stop: TrackedStop) -> Result<ResponseData, Box<d
     
     let response_body: Response<ResponseData> = res.json().await?;
 
-    println!("{:#?}", response_body);
+    debug!("{:#?}", response_body);
 
     Ok(response_body.data.expect("Missing response data"))
 }
@@ -245,7 +252,7 @@ fn format_departure_time(departure_time: DateTime) -> Option<String> {
 
     return
     if time_delta < TimeDelta::zero() {
-        println!("Departure time in the past.");
+        info!("Data error: Expected departure time is in the past.");
         None
     } else if time_delta < TimeDelta::minutes(1) {
         Some(String::from("Nå"))
