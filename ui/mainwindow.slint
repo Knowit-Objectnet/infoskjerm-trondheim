@@ -61,7 +61,7 @@ export component MainWindow inherits Window {
     VerticalLayout {
         width: 100%;
         padding: 3rem;
-        spacing: 8rem;
+        spacing: 4rem;
         alignment: start;
 
         HorizontalLayout {
@@ -89,13 +89,13 @@ export component MainWindow inherits Window {
             tracking: foodTracking;
         }
 
-        TransportationWidget {
-            stopPlacesData: stopPlacesData;
-        }
-
         CalendarWidget {
             events: events;
             meetings: [];
+        }
+
+        TransportationWidget {
+            stopPlacesData: stopPlacesData;
         }
 
         XkcdWidget {
