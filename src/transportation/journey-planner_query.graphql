@@ -1,0 +1,39 @@
+query Query($id: String!, $numberOfDepartures: Int) {
+    stopPlace(id: $id) {
+        id
+        name
+        quays(filterByInUse: true) {
+            id
+            name
+            publicCode
+            estimatedCalls(numberOfDepartures: $numberOfDepartures) {
+                realtime
+                aimedArrivalTime
+                aimedDepartureTime
+                expectedArrivalTime
+                expectedDepartureTime
+                actualArrivalTime
+                actualDepartureTime
+                date
+                forBoarding
+                forAlighting
+                destinationDisplay {
+                    frontText
+                    via
+                }
+                serviceJourney {
+                    directionType
+                    publicCode
+                    journeyPattern {
+                        line {
+                            id
+                            name
+                            transportMode
+                            publicCode
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

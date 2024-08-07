@@ -47,3 +47,11 @@ GUI-koden eksponerar også typar, som `Forecast`-structen i [weatherwidget.slint
 * Koderydding
 * Feilhåndtering
 * Fikse minnelekkasje?
+
+## Vedlikehold
+
+### Oppdater skjema-definisjoner fra EnTurs API.
+
+```shell
+graphql-client introspect-schema "https://api.entur.io/journey-planner/v3/graphql" --output "src/resources/journey-planner_schema.json"
+```

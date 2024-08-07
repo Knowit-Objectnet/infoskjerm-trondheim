@@ -1,0 +1,94 @@
+import { Divider } from "utils.slint";
+import { StandardTableView } from "std-widgets.slint";
+export struct StopPlaceDataRow {
+    transportMode: image,
+    publicCode: string,
+    destinationFrontText: string,
+    departureTime: string,
+    realtime: bool,
+}
+
+export struct StopPlaceData {
+    stopName: string,
+    stopDataRows: [StopPlaceDataRow]
+}
+
+component DisplayRow {
+    in property <StopPlaceDataRow> stopPlaceDataRow;
+
+    VerticalLayout {
+        spacing: 0.75rem;
+
+        HorizontalLayout {
+                alignment: start;
+
+                Image {
+                    height: 1.5rem;
+                    width: 7.5%;
+                    source: stopPlaceDataRow.transportMode;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 7.5%;
+                    text: stopPlaceDataRow.publicCode;
+                    color: whitesmoke;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 70%;
+                    text: stopPlaceDataRow.destinationFrontText;
+                    color: whitesmoke;
+                }
+                Text {
+                    font-size: 1.5rem;
+                    width: 15%;
+                    text: stopPlaceDataRow.departureTime;
+                    color: stopPlaceDataRow.realtime ? whitesmoke : yellow;
+                }
+            }
+
+        Divider {}
+    }
+}
+
+component DisplayColumn {
+    in property <StopPlaceData> stopPlaceData;
+
+    VerticalLayout {
+        spacing: 1rem;
+
+        Text {
+            color: whitesmoke;
+            font-size: 2.5rem;
+            text: stopPlaceData.stopName;
+            horizontal-alignment: left;
+        }
+
+        Divider {}
+
+        for stopPlaceRow in stopPlaceData.stopDataRows : DisplayRow {
+            stopPlaceDataRow: stopPlaceRow;
+        }
+    }
+}
+
+export component TransportationWidget{
+    in property <[StopPlaceData]> stopPlacesData;
+
+    VerticalLayout {
+        spacing: 2rem;
+
+        Text {
+            color: whitesmoke;
+            font-size: 4rem;
+            text: "Busstider";
+            horizontal-alignment: left;
+        }
+
+        HorizontalLayout {
+            for stopPlace in stopPlacesData : DisplayColumn {
+                stopPlaceData: stopPlace;
+            }
+        }
+    }
+}

@@ -4,6 +4,7 @@ import { GridBox , HorizontalBox} from "std-widgets.slint";
 import { Xkcd, XkcdWidget } from "xkcdwidget.slint";
 import { ForecastWidget, Forecast } from "forecastwidget.slint";
 import { FoodTrackerWidget, FoodTracking} from "foodtrackerwidget.slint";
+import { StopPlaceData, TransportationWidget } from "transportation.slint";
 import { CalendarWidget, Event } from "calendarwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
@@ -38,6 +39,17 @@ export component MainWindow inherits Window {
         date: "31. April",
     }];
 
+    in property <[StopPlaceData]> stopPlacesData: [{
+        stopName: "Placeholder",
+        stopDataRows: [{
+           transportMode: @image-url("../img/transport/walk.png"),
+           publicCode: 0,
+           destinationFrontText: "Månen",
+           departureTime: "Nå",
+           realtime: false,
+        }]
+    }];
+
     title: "Infoskjerm";
     //TODO: Set programmatically?
     no-frame: true;
@@ -49,7 +61,7 @@ export component MainWindow inherits Window {
     VerticalLayout {
         width: 100%;
         padding: 3rem;
-        spacing: 8rem;
+        spacing: 4rem;
         alignment: start;
 
         HorizontalLayout {
@@ -80,6 +92,10 @@ export component MainWindow inherits Window {
         CalendarWidget {
             events: events;
             meetings: [];
+        }
+
+        TransportationWidget {
+            stopPlacesData: stopPlacesData;
         }
 
         XkcdWidget {

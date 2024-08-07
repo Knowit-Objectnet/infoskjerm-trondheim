@@ -10,6 +10,7 @@ selfie = []
 [dependencies]
 chrono = { version = "0.4.26", features = ["serde", "unstable-locales"] }
 image = "0.24.7"
+graphql_client = { version = "0.13.0" }
 reqwest = { version = "0.11.23", features = [
     "json",
     "rustls-tls",
