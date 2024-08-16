@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "selfie"), allow(unused_imports))]
 use crate::ui::*;
 use image::{
     error::{ParameterError, ParameterErrorKind},

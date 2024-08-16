@@ -33,7 +33,7 @@ fn main() -> Result<(), PlatformError> {
 
     //we need to store the timers in variables to prevent them from being dropped
     let _t = datetime::setup(&main_window);
-    #[cfg(feature = "selfie")] //grab selfie of app
+    #[cfg(feature = "selfie")] //grab screenshot of running app
     let _s = selfie::grab_selfie(&main_window);
 
     main_window.run()
