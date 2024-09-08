@@ -16,7 +16,7 @@ env:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -25,19 +25,22 @@ jobs:
       with:
         path: target
         key: ${{ runner.os }}-cargo-build-target-foo-${{ hashFiles('**/Cargo.lock') }}
+   
+    - name: Install dependencies
+      run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libxkbcommon-x11-0
+    
+    - name: Start Xvfb
+      run: Xvfb :99 -screen 0 1080x1900x24 &
 
     - name: Build
       run: cargo build --release --features selfie
 
-    - name: Hide Dock
-      run: defaults write com.apple.dock autohide -bool true && killall Dock
-
     - name: Run and take screenshot
       run: |
-        cargo run --release --features selfie > cargo.log 2>&1 &
+        cargo run --release --features selfie &
         sleep 5
-        screencapture fullscreen.png
-
 
     - name: Commit and push screenshot
       run: |
@@ -53,4 +56,3 @@ jobs:
         name: screenshot
         path: |
           screenshot.png
-          fullscreen.png
