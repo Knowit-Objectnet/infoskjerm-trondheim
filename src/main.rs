@@ -10,6 +10,7 @@ mod forecast;
 mod selfie;
 mod xkcd;
 mod transportation;
+mod seasons;
 
 pub mod ui {
     slint::include_modules!();
@@ -32,9 +33,10 @@ fn main() -> Result<(), PlatformError> {
     transportation::setup(&main_window);
 
     //we need to store the timers in variables to prevent them from being dropped
-    let _t = datetime::setup(&main_window);
     #[cfg(feature = "selfie")] //grab screenshot of running app
     let _s = selfie::grab_selfie(&main_window);
+    let _t = datetime::setup(&main_window);
+    let _f = seasons::setup_seasons(&main_window);
 
     main_window.run()
 }
