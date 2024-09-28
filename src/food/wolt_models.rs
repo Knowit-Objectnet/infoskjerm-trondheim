@@ -9,6 +9,8 @@ pub struct WoltTracking {
     pub from_location: FromLocation,
     #[serde(rename = "delivery_eta")]
     pub delivery_eta: Option<DateTime<Local>>,
+    #[serde(rename="requested_dropoff_time")]
+    pub requested_dropoff_time: Option<DateTime<Local>>,
     #[serde(rename = "refresh_in_seconds")]
     pub refresh_in_seconds: i64,
 }

@@ -6,67 +6,72 @@ export struct FoodTracking {
     active: bool,
 }
 
-export component FoodTrackerWidget{
+export component FoodTrackerWidget {
     in property <FoodTracking> tracking: {
         resturant_name: "Burger King",
         minutes-remaining: "5",
         status: "Transport",
         active: true
     };
-        Rectangle {
-            height: 10rem;
-            min-height: 8rem;
-            background: #FFFFFF;
-            border-radius: 32px;
-            HorizontalLayout {
-                alignment: space-around;
-                VerticalLayout {
-                    alignment: center;
-                    spacing: 0.25rem;
-                    Text {
-                        text: "Fra";
-                        color: #1F0D8D;
-                        font-size: 2rem;
-                    }
-                    Text {
-                        text: tracking.resturant_name;
-                        color: #000000;
-                        font-size: 3rem;
-                    }
+    Rectangle {
+        height: 10rem;
+        min-height: 8rem;
+        background: #FFFFFF;
+        border-radius: 32px;
+        HorizontalLayout {
+            alignment: space-around;
+            VerticalLayout {
+                alignment: center;
+                spacing: 0.25rem;
+                Text {
+                    text: "Fra";
+                    color: #1F0D8D;
+                    font-size: 2rem;
                 }
-                VerticalLayout {
-                    alignment: center;
-                    spacing: 0.25rem;
-                    Text {
-                        text: "Status";
-                        color: #1F0D8D;
-                        font-size: 2rem;
-                    }
-                    Text {
-                        text: tracking.status;
-                        color: #000000;
-                        font-size: 3rem;
-                    }
+
+                Text {
+                    text: tracking.resturant_name;
+                    color: #000000;
+                    font-size: 3rem;
                 }
-                VerticalLayout {
-                    alignment: center;
-                    spacing: 0.25rem;
-                    Text {
-                        text: "ETA";
-                        color: #1F0D8D;
-                        font-size: 2rem;
-                    }
-                    Text {
-                        text: tracking.minutes-remaining + " minutter";
-                        color: #000000;
-                        font-size: 3rem;
-                    }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                spacing: 0.25rem;
+                Text {
+                    text: "Status";
+                    color: #1F0D8D;
+                    font-size: 2rem;
                 }
-                Image {
-                    source: @image-url("../img/wolt.png");
-                    width: 100px;
+
+                Text {
+                    text: tracking.status;
+                    color: #000000;
+                    font-size: 3rem;
                 }
-    
+            }
+
+            VerticalLayout {
+                alignment: center;
+                spacing: 0.25rem;
+                Text {
+                    text: "ETA";
+                    color: #1F0D8D;
+                    font-size: 2rem;
+                }
+
+                Text {
+                    text: tracking.minutes-remaining;
+                    color: #000000;
+                    font-size: 3rem;
+                }
+            }
+
+            Image {
+                source: @image-url("../img/wolt.png");
+                width: 100px;
             }
         }
+    }
 }
