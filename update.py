@@ -51,9 +51,13 @@ tarlike = io.BytesIO(response.content)
 with tarfile.open(fileobj=tarlike, mode="r:gz") as tar:
     tar.extractall()
 
-# Step 5: Update running version
+# Step 5: Run the run.sh script
+res = subprocess.run(["sh", "run.sh"])
+
+if res.returncode != 0:
+    print("Could not start infoskjerm")
+    exit(1)
+
+# Step 6: Update running version
 with open("VERSION", "w+") as file:
     file.write(version)
-
-# Step 6: Run the run.sh script
-subprocess.run(["sh", "run.sh"])
