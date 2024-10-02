@@ -122,7 +122,7 @@ pub async fn parse_calendar(cal_to_parse: &[u8]) -> Vec<CalendarEvent> {
             }
 
             match name {
-                "SUMMARY" => summary = Some(value),
+                "SUMMARY" => summary = parse_summary(value),
                 "DTSTART" => start_time = parse_date(value).await,
                 "DTEND" => end_time = parse_date(value).await,
                 _ => (),
@@ -159,5 +159,13 @@ pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
         chrono::LocalResult::None => None,
         chrono::LocalResult::Single(a) => Some(a),
         chrono::LocalResult::Ambiguous(a, _) => Some(a),
+    }
+}
+
+fn parse_summary(mut summary: String) -> Option<String> {
+    if summary.starts_with("Avvist: ") {
+        Some(summary.split_off(8))
+    } else {
+        Some(summary)
     }
 }
