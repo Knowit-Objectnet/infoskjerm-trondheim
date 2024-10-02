@@ -66,6 +66,7 @@ jobs:
       run: |
         cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
         chmod 777 ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
+        chmod 777 update.py
         tar -czvf infoskjerm.tar.gz update.py \
           -C ./target/armv7-unknown-linux-gnueabihf/release infoskjerm
     
