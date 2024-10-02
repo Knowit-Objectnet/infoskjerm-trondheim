@@ -52,15 +52,18 @@ fn get_tracking_status(tracking_data: Result<WoltTracking, reqwest::Error>) -> F
     match tracking_data {
         Ok(tracking_data) => {
             info!("Processing tracking data: {:?}", tracking_data);
+            
+            let dropoff_time = match tracking_data.delivery_eta {
+                Some(t) => t.format("%H:%M").to_string(),
+                None => "ukjent".to_string()
+            };
+
             let minutes_remaining: SharedString = match tracking_data.delivery_eta {
                 Some(eta) => {
                  let minutes_remaining = ((eta) - Local::now()).num_minutes().to_string();
                  format!("{} minutter", minutes_remaining).into()    
                 }
-                None => match tracking_data.requested_dropoff_time {
-                    Some(dropoff_time) => dropoff_time.format("%H:%M").to_string().into(),
-                    None => "ukjent".into()
-                },
+                None => dropoff_time.into()
             };
 
             let active = tracking_data.status != "delivered";
