@@ -8,6 +8,8 @@ import { StopPlaceData, TransportationWidget } from "transportation.slint";
 import { CalendarWidget, Event } from "calendarwidget.slint";
 import "./assets/Bagoss.ttf";
 import "./assets/FiraMono-Regular.ttf";
+import { Bulb } from "bulb.slint";
+import { SeasonEffects, Snowflake, SpookyFace, Bat } from "seasons.slint";
 
 export component MainWindow inherits Window {
     in property <string> time: "12:34";
@@ -39,16 +41,26 @@ export component MainWindow inherits Window {
         date: "31. April",
     }];
 
-    in property <[StopPlaceData]> stopPlacesData: [{
-        stopName: "Placeholder",
-        stopDataRows: [{
-           transportMode: @image-url("../img/transport/walk.png"),
-           publicCode: 0,
-           destinationFrontText: "Månen",
-           departureTime: "Nå",
-           realtime: false,
-        }]
-    }];
+    in property <[Snowflake]> snowflakes;
+    in-out property <SpookyFace> spooky_face;
+    in-out property <Bat> bat;
+
+    in property <[StopPlaceData]> stopPlacesData: [
+        {
+            stopName: "Placeholder",
+            stopDataRows: [
+                {
+                    transportMode: @image-url("../img/transport/walk.png"),
+                    publicCode: 0,
+                    destinationFrontText: "Månen",
+                    departureTime: "Nå",
+                    realtime: false,
+                }
+            ]
+        }
+    ];
+
+    in property <int> name;
 
     title: "Infoskjerm";
     //TODO: Set programmatically?
@@ -58,49 +70,54 @@ export component MainWindow inherits Window {
     background: #0C0C27;
 
     default-font-family: "Bagoss";
-    VerticalLayout {
-        width: 100%;
-        padding: 3rem;
-        spacing: 4rem;
-        alignment: start;
 
-        HorizontalLayout {
+    SeasonEffects {
+        snow: snowflakes;
+        spooky_face: spooky_face;
+        bat: bat;
+
+        VerticalLayout {
             width: 100%;
-            alignment: space-between;
-            Text {
-                font-size: 2.5rem;
-                color: #FEFBE6;
-                text: date;
+            padding: 3rem;
+            spacing: 4rem;
+            alignment: start;
+            HorizontalLayout {
+                width: 100%;
+                alignment: space-between;
+                Text {
+                    font-size: 2.5rem;
+                    color: #FEFBE6;
+                    text: date;
+                }
+
+                Text {
+                    color: #FEFBE6;
+                    font-size: 2.5rem;
+                    text: time;
+                }
             }
 
-            Text {
-                color: #FEFBE6;
-                font-size: 2.5rem;
-                text: time;
+            ForecastWidget {
+                today: todayForecast;
+                tomorrow: tomorrowForecast;
             }
-        }
 
-        ForecastWidget {
-            today: todayForecast;
-            tomorrow: tomorrowForecast;
-        }
+            if foodTracking.active: FoodTrackerWidget {
+                tracking: foodTracking;
+            }
+            CalendarWidget {
+                events: events;
+                meetings: [];
+            }
 
-        if foodTracking.active: FoodTrackerWidget {
-            tracking: foodTracking;
-        }
+            TransportationWidget {
+                stopPlacesData: stopPlacesData;
+            }
 
-        CalendarWidget {
-            events: events;
-            meetings: [];
-        }
-
-        TransportationWidget {
-            stopPlacesData: stopPlacesData;
-        }
-
-        XkcdWidget {
-            max-height: 30rem;
-            xkcd: xkcd;
+            XkcdWidget {
+                max-height: 30rem;
+                xkcd: xkcd;
+            }
         }
     }
 }
