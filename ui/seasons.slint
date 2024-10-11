@@ -10,8 +10,7 @@ export struct SpookyFace {
 
 export struct Bat {
     pos: Point,
-    size: length,
-    frame: image}
+    size: length}
 
 component Flake inherits Rectangle {
     width: 10px;
@@ -40,7 +39,6 @@ export component SeasonEffects inherits Rectangle {
         y: spooky_face.pos.y;
         z: 200.0;
         width: spooky_face.size;
-        colorize: darkorange;
         opacity: spooky_face.hidden ? 0% : 30%;
 
         animate opacity {
@@ -50,15 +48,29 @@ export component SeasonEffects inherits Rectangle {
     }
 
     Image {
-        source: bat.frame;
-        width: 200px;
+
+        property <[image]> frames: [
+            @image-url("../img/seasons/halloween/bat-0.png"),
+            @image-url("../img/seasons/halloween/bat-1.png"),
+            @image-url("../img/seasons/halloween/bat-2.png"),
+            @image-url("../img/seasons/halloween/bat-3.png"),
+            @image-url("../img/seasons/halloween/bat-4.png"),
+            @image-url("../img/seasons/halloween/bat-5.png"),
+            @image-url("../img/seasons/halloween/bat-6.png"),
+            @image-url("../img/seasons/halloween/bat-7.png"),
+            @image-url("../img/seasons/halloween/bat-8.png"),
+        ];
+        property <duration> duration: 1000ms;
+        property <int> total-frames: frames.length - 1;
+        source: frames[(total-frames * (animation-tick() / duration)).mod(total-frames)];
+
         x: bat.pos.x;
         y: bat.pos.y;
         z: 200;
 
         animate x, y {
-            duration: 2s;
-            easing: ease-out-bounce;
+            duration: 10s;
+            easing: ease;
         }
     }
 }
