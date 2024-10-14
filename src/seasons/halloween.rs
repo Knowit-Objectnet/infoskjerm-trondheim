@@ -12,7 +12,7 @@ pub fn setup_halloween_spooky_face(main_window: &MainWindow) -> Timer {
 
     halloween_timer.start(
         TimerMode::Repeated,
-        std::time::Duration::from_secs(10),
+        std::time::Duration::from_secs(13),
         move || {
             let mut current_spooky = halloween_handle.unwrap().get_spooky_face();
             if current_spooky.hidden {
@@ -55,10 +55,7 @@ pub fn setup_halloween_bat(main_window: &MainWindow) -> Timer {
                 y: rng.gen_range(0.0..height as f32),
             };
 
-            let bat = Bat {
-                pos: new_pos,
-                size: 200 as f32,
-            };
+            let bat = Bat { pos: new_pos };
 
             handle.unwrap().set_bat(bat)
         },
