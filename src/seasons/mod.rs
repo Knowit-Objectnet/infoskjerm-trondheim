@@ -15,13 +15,13 @@ use halloween::{setup_halloween_bat, setup_halloween_spooky_face};
 
 pub fn setup_seasons(main_window: &MainWindow) -> Vec<Timer> {
     let mut season_timers = vec![];
+    let now = Local::now();
 
-    if Local::now().month() == 12 {
+    if Local::now().month() == 11 && now.day() >= 10 {
         let snow_timer = setup_snow(main_window);
         season_timers.push(snow_timer);
     }
 
-    let now = Local::now();
     if now.month() == 10 && now.day() >= 10 && now.day() <= 31 {
         let face_timer = setup_halloween_spooky_face(main_window);
         let bat_timer = setup_halloween_bat(main_window);
