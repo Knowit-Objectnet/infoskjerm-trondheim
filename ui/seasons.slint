@@ -1,6 +1,7 @@
 export struct Snowflake {
     x: float,
     y: float,
+    size: float,
 }
 
 export struct SpookyFace {
@@ -13,10 +14,9 @@ export struct Bat {
 }
 
 component Flake inherits Rectangle {
-    width: 10px;
-    height: 10px;
     background: @linear-gradient(145deg, #ffffff 70%, #0074d9 100%);
     border-radius: self.width / 2;
+    z: 0.0;
 }
 
 export component SeasonEffects inherits Rectangle {
@@ -30,7 +30,8 @@ export component SeasonEffects inherits Rectangle {
     for flake in snow: Flake {
         x: flake.x * 1px;
         y: flake.y * 1px;
-        z: 200.0;
+        width: flake.size * 1px;
+        height: flake.size * 1px;
     }
 
     face := Image {
