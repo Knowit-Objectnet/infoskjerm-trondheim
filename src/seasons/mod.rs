@@ -17,7 +17,7 @@ pub fn setup_seasons(main_window: &MainWindow) -> Vec<Timer> {
     let mut season_timers = vec![];
     let now = Local::now();
 
-    if Local::now().month() == 11 && now.day() >= 10 {
+    if Local::now().month() == 12 {
         let snow_timer = setup_snow(main_window);
         season_timers.push(snow_timer);
     }
