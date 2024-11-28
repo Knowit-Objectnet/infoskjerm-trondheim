@@ -30,33 +30,20 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
     let height = 1920;
 
     let mut flurry = vec![];
-    for _ in 0..33 {
-        let snowflake = SnowflakeModel {
-            x: rng.gen_range(0.0..width as f32),
-            y: rng.gen_range(0.0..height as f32),
-            x_velocity: rng.gen_range(-1.0..1.0),
-            y_velocity: rng.gen_range(1.0..2.0),
-            size: 8.0,
+    for _ in 0..100 {
+        // Make 1/3 small, 1/3 medium and 1/3 large snowflakes, to achieve some sort of parallax.
+        let (size, y_velocity) = match rng.gen_range(0..3) {
+            0 => (2.0, rng.gen_range(0.1..0.5)),
+            1 => (5.0, rng.gen_range(0.5..1.0)),
+            _ => (8.0, rng.gen_range(1.0..2.0)),
         };
-        flurry.push(snowflake);
-    }
-    for _ in 0..33 {
+
         let snowflake = SnowflakeModel {
             x: rng.gen_range(0.0..width as f32),
             y: rng.gen_range(0.0..height as f32),
             x_velocity: rng.gen_range(-1.0..1.0),
-            y_velocity: rng.gen_range(0.5..1.0),
-            size: 6.0,
-        };
-        flurry.push(snowflake);
-    }
-    for _ in 0..33 {
-        let snowflake = SnowflakeModel {
-            x: rng.gen_range(0.0..width as f32),
-            y: rng.gen_range(0.0..height as f32),
-            x_velocity: rng.gen_range(-1.0..1.0),
-            y_velocity: rng.gen_range(0.1..0.5),
-            size: 2.0,
+            y_velocity,
+            size,
         };
         flurry.push(snowflake);
     }
