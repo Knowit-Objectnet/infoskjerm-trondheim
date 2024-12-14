@@ -41,8 +41,8 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
         let snowflake = SnowflakeModel {
             x: rng.gen_range(0.0..width as f32),
             y: rng.gen_range(0.0..height as f32),
-            x_velocity: rng.gen_range(-1.0..1.0),
-            y_velocity,
+            x_velocity: rng.gen_range(-1.0..1.0) / 2.0,
+            y_velocity: y_velocity / 2.0,
             size,
         };
         flurry.push(snowflake);
@@ -50,9 +50,10 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
 
     snow_timer.start(
         TimerMode::Repeated,
-        std::time::Duration::from_millis(10),
+        std::time::Duration::from_millis(0),
         move || {
-            let snowflakes: VecModel<Snowflake> = VecModel::default();
+            let start_time = std::time::Instant::now();
+            let mut snowflakes: Vec<Snowflake> = Vec::with_capacity(flurry.len());
             for flake in &mut flurry {
                 flake.x += flake.x_velocity;
                 flake.y += flake.y_velocity;
@@ -74,7 +75,9 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
             }
             snow_handle
                 .unwrap()
-                .set_snowflakes(Rc::new(snowflakes).into());
+                .set_snowflakes(Rc::new(VecModel::from(snowflakes)).into());
+            let duration = start_time.elapsed();
+            // println!("Snowflake update took: {:?}", duration);
         },
     );
 

@@ -7,10 +7,10 @@ mod calendar;
 mod datetime;
 mod food;
 mod forecast;
-mod selfie;
-mod xkcd;
-mod transportation;
 mod seasons;
+mod selfie;
+mod transportation;
+mod xkcd;
 
 pub mod ui {
     slint::include_modules!();
