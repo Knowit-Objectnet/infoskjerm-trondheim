@@ -22,7 +22,7 @@ slint = { git = "https://github.com/slint-ui/slint", branch = "master", default-
     "backend-winit-wayland",
     "renderer-femtovg",
     "compat-1-2",
-    # "backend-linuxkms",
+    "backend-linuxkms",
 ] }
 rust-embed = "8.5.0"
 log = "0.4.20"

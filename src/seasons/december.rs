@@ -2,6 +2,7 @@ use crate::ui::*;
 use rand::Rng;
 use slint::{Timer, TimerMode, VecModel};
 use std::rc::Rc;
+use log::info;
 
 struct SnowflakeModel {
     x: f32,
@@ -50,7 +51,7 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
 
     snow_timer.start(
         TimerMode::Repeated,
-        std::time::Duration::from_millis(0),
+        std::time::Duration::from_millis(16),
         move || {
             let start_time = std::time::Instant::now();
             let mut snowflakes: Vec<Snowflake> = Vec::with_capacity(flurry.len());
@@ -77,7 +78,7 @@ pub fn setup_snow(main_window: &MainWindow) -> Timer {
                 .unwrap()
                 .set_snowflakes(Rc::new(VecModel::from(snowflakes)).into());
             let duration = start_time.elapsed();
-            // println!("Snowflake update took: {:?}", duration);
+            info!("Snowflake update took: {:?}", duration);
         },
     );
 
