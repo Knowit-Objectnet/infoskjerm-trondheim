@@ -106,7 +106,7 @@ dependencies = [
  "accesskit_macos",
  "accesskit_unix",
  "accesskit_windows",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "winit",
 ]
 
@@ -278,6 +278,15 @@ name = "as-raw-xcb-connection"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "175571dd1d178ced59193a6fc02dde1b972eb0bc56c892cde9beeceac5bf0f6b"
+
+[[package]]
+name = "ash"
+version = "0.37.3+1.3.251"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "39e9c3835d686b0a6084ab4234fcd1b07dbf6e4767dce60874b12356a25ecd4a"
+dependencies = [
+ "libloading 0.7.4",
+]
 
 [[package]]
 name = "async-broadcast"
@@ -981,7 +990,7 @@ checksum = "0b023947811758c97c59bf9d1c188fd619ad4718dcaa767947df1cadb14f39f4"
 dependencies = [
  "glob",
  "libc",
- "libloading",
+ "libloading 0.8.6",
 ]
 
 [[package]]
@@ -1044,7 +1053,7 @@ dependencies = [
 [[package]]
 name = "const-field-offset"
 version = "0.1.5"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "const-field-offset-macro",
  "field-offset",
@@ -1053,7 +1062,7 @@ dependencies = [
 [[package]]
 name = "const-field-offset-macro"
 version = "0.1.5"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1304,6 +1313,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "crossbeam-queue"
+version = "0.3.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0f58bbc28f91df819d0aa2a2c00cd19754769c2fad90579b3592b1c9ba7a3115"
+dependencies = [
+ "crossbeam-utils",
+]
+
+[[package]]
 name = "crossbeam-utils"
 version = "0.8.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1497,7 +1515,7 @@ version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "330c60081dcc4c72131f8eb70510f1ac07223e5d4163db481a04a0befcffa412"
 dependencies = [
- "libloading",
+ "libloading 0.8.6",
 ]
 
 [[package]]
@@ -1514,15 +1532,38 @@ checksum = "f25c0e292a7ca6d6498557ff1df68f32c99850012b6ea401cf8daf771f22ff53"
 
 [[package]]
 name = "drm"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98888c4bbd601524c11a7ed63f814b8825f420514f78e96f752c437ae9cbb5d1"
+dependencies = [
+ "bitflags 2.6.0",
+ "bytemuck",
+ "drm-ffi 0.8.0",
+ "drm-fourcc",
+ "rustix 0.38.42",
+]
+
+[[package]]
+name = "drm"
 version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80bc8c5c6c2941f70a55c15f8d9f00f9710ebda3ffda98075f996a0e6c92756f"
 dependencies = [
  "bitflags 2.6.0",
  "bytemuck",
- "drm-ffi",
+ "drm-ffi 0.9.0",
  "drm-fourcc",
  "libc",
+ "rustix 0.38.42",
+]
+
+[[package]]
+name = "drm-ffi"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97c98727e48b7ccb4f4aea8cfe881e5b07f702d17b7875991881b41af7278d53"
+dependencies = [
+ "drm-sys 0.7.0",
  "rustix 0.38.42",
 ]
 
@@ -1532,7 +1573,7 @@ version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8e41459d99a9b529845f6d2c909eb9adf3b6d2f82635ae40be8de0601726e8b"
 dependencies = [
- "drm-sys",
+ "drm-sys 0.8.0",
  "rustix 0.38.42",
 ]
 
@@ -1541,6 +1582,16 @@ name = "drm-fourcc"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0aafbcdb8afc29c1a7ee5fbe53b5d62f4565b35a042a662ca9fecd0b54dae6f4"
+
+[[package]]
+name = "drm-sys"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd39dde40b6e196c2e8763f23d119ddb1a8714534bf7d77fa97a65b0feda3986"
+dependencies = [
+ "libc",
+ "linux-raw-sys 0.6.5",
+]
 
 [[package]]
 name = "drm-sys"
@@ -1977,7 +2028,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fa9a106f044fbd21edf2d8cc57300df1e60630e46ed4bebd59cdcbb23cfad1ce"
 dependencies = [
  "bitflags 2.6.0",
- "drm",
+ "drm 0.14.1",
  "drm-fourcc",
  "gbm-sys",
  "libc",
@@ -2127,12 +2178,12 @@ dependencies = [
  "glutin_egl_sys",
  "glutin_glx_sys",
  "glutin_wgl_sys",
- "libloading",
+ "libloading 0.8.6",
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",
  "once_cell",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "wayland-sys",
  "windows-sys 0.52.0",
  "x11-dl",
@@ -2146,7 +2197,7 @@ checksum = "85edca7075f8fc728f28cb8fbb111a96c3b89e930574369e3e9c27eb75d3788f"
 dependencies = [
  "cfg_aliases",
  "glutin",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "winit",
 ]
 
@@ -2262,6 +2313,7 @@ version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6dd08c532ae367adf81c312a4580bc67f1d0fe8bc9c460520283f4c0ff277888"
 dependencies = [
+ "bytemuck",
  "cfg-if 1.0.0",
  "crunchy",
 ]
@@ -2476,28 +2528,30 @@ dependencies = [
 [[package]]
 name = "i-slint-backend-linuxkms"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "bytemuck",
  "calloop 0.14.2",
- "drm",
+ "drm 0.14.1",
  "gbm",
  "glutin",
  "i-slint-common",
  "i-slint-core",
  "i-slint-renderer-femtovg",
+ "i-slint-renderer-skia",
  "input",
  "libseat",
  "memmap2",
  "nix",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
+ "vulkano",
  "xkbcommon",
 ]
 
 [[package]]
 name = "i-slint-backend-qt"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "const-field-offset",
  "cpp",
@@ -2516,7 +2570,7 @@ dependencies = [
 [[package]]
 name = "i-slint-backend-selector"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "cfg-if 1.0.0",
  "i-slint-backend-linuxkms",
@@ -2524,18 +2578,20 @@ dependencies = [
  "i-slint-backend-winit",
  "i-slint-common",
  "i-slint-core",
+ "i-slint-renderer-skia",
 ]
 
 [[package]]
 name = "i-slint-backend-winit"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "accesskit",
  "accesskit_winit",
  "bytemuck",
  "cfg-if 1.0.0",
  "cfg_aliases",
+ "const-field-offset",
  "copypasta",
  "derive_more",
  "glutin",
@@ -2550,7 +2606,7 @@ dependencies = [
  "objc2-app-kit",
  "once_cell",
  "pin-weak",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "rgb",
  "scoped-tls-hkt",
  "scopeguard",
@@ -2563,19 +2619,19 @@ dependencies = [
 [[package]]
 name = "i-slint-common"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "cfg-if 1.0.0",
  "derive_more",
  "fontdb",
- "libloading",
+ "libloading 0.8.6",
  "ttf-parser 0.25.1",
 ]
 
 [[package]]
 name = "i-slint-compiler"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "by_address",
  "codemap",
@@ -2605,7 +2661,7 @@ dependencies = [
 [[package]]
 name = "i-slint-core"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "auto_enums",
  "bitflags 2.6.0",
@@ -2630,7 +2686,7 @@ dependencies = [
  "pin-project",
  "pin-weak",
  "portable-atomic",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "resvg",
  "rgb",
  "rustybuzz 0.20.1",
@@ -2652,17 +2708,16 @@ dependencies = [
 [[package]]
 name = "i-slint-core-macros"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "quote",
- "serde_json",
  "syn 2.0.90",
 ]
 
 [[package]]
 name = "i-slint-renderer-femtovg"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "cfg-if 1.0.0",
  "const-field-offset",
@@ -2692,8 +2747,9 @@ dependencies = [
 [[package]]
 name = "i-slint-renderer-skia"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
+ "ash",
  "bytemuck",
  "cfg-if 1.0.0",
  "cfg_aliases",
@@ -2712,13 +2768,14 @@ dependencies = [
  "objc2-quartz-core",
  "once_cell",
  "pin-weak",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "raw-window-metal",
  "scoped-tls-hkt",
  "skia-safe",
  "softbuffer",
  "unicode-segmentation",
  "vtable",
+ "vulkano",
  "windows",
 ]
 
@@ -3196,6 +3253,16 @@ checksum = "5aaeb2981e0606ca11d79718f8bb01164f1d6ed75080182d3abf017e6d244b6d"
 
 [[package]]
 name = "libloading"
+version = "0.7.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b67380fd3b2fbe7527a606e18729d21c6f3951633d0500574c4dc22d2d638b9f"
+dependencies = [
+ "cfg-if 1.0.0",
+ "winapi",
+]
+
+[[package]]
+name = "libloading"
 version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc2f4eb4bc735547cfed7c0a4922cbd04a4655978c09b54f1f7b228750664c34"
@@ -3298,6 +3365,16 @@ name = "litemap"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ee93343901ab17bd981295f2cf0026d4ad018c7c31ba84549a4ddbb47a45104"
+
+[[package]]
+name = "lock_api"
+version = "0.4.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "07af8b9cdd281b7915f413fa73f29ebd5d55d0d3f0155584dade1ff18cea1b17"
+dependencies = [
+ "autocfg",
+ "scopeguard",
+]
 
 [[package]]
 name = "log"
@@ -3433,7 +3510,7 @@ dependencies = [
  "log",
  "ndk-sys",
  "num_enum",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "thiserror",
 ]
 
@@ -3804,6 +3881,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba"
 
 [[package]]
+name = "parking_lot"
+version = "0.12.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1bf18183cf54e8d6059647fc3063646a1801cf30896933ec2311622cc4b9a27"
+dependencies = [
+ "lock_api",
+ "parking_lot_core",
+]
+
+[[package]]
+name = "parking_lot_core"
+version = "0.9.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e401f977ab385c9e4e3ab30627d6f26d00e2c73eef317493c4ec6d468726cf8"
+dependencies = [
+ "cfg-if 1.0.0",
+ "libc",
+ "redox_syscall 0.5.8",
+ "smallvec",
+ "windows-targets 0.52.6",
+]
+
+[[package]]
 name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4128,6 +4228,12 @@ checksum = "ca3129af7b92a17112d59ad498c6f81eaf463253766b90396d39ea7a39d6613c"
 dependencies = [
  "rand_core 0.5.1",
 ]
+
+[[package]]
+name = "raw-window-handle"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2ff9a1f06a88b01621b7ae906ef0211290d1c8a168a15542486a8f61c0833b9"
 
 [[package]]
 name = "raw-window-handle"
@@ -4798,13 +4904,12 @@ dependencies = [
 [[package]]
 name = "slint"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "const-field-offset",
  "i-slint-backend-qt",
  "i-slint-backend-selector",
  "i-slint-core",
- "i-slint-core-macros",
  "i-slint-renderer-femtovg",
  "num-traits",
  "once_cell",
@@ -4816,10 +4921,9 @@ dependencies = [
 [[package]]
 name = "slint-build"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "i-slint-compiler",
- "i-slint-core-macros",
  "spin_on",
  "thiserror",
  "toml_edit",
@@ -4828,7 +4932,7 @@ dependencies = [
 [[package]]
 name = "slint-macros"
 version = "1.9.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "i-slint-compiler",
  "proc-macro2",
@@ -4936,6 +5040,7 @@ dependencies = [
  "bytemuck",
  "cfg_aliases",
  "core-graphics 0.24.0",
+ "drm 0.12.0",
  "fastrand 2.3.0",
  "foreign-types",
  "js-sys",
@@ -4944,7 +5049,7 @@ dependencies = [
  "objc2",
  "objc2-foundation",
  "objc2-quartz-core",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "redox_syscall 0.5.8",
  "rustix 0.38.42",
  "tiny-xlib",
@@ -5302,6 +5407,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "thread_local"
+version = "1.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b9ef9bad013ada3808854ceac7b46812a6465ba368859a37e2100283d2d719c"
+dependencies = [
+ "cfg-if 1.0.0",
+ "once_cell",
+]
+
+[[package]]
 name = "tide"
 version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5438,7 +5553,7 @@ checksum = "0324504befd01cab6e0c994f34b2ffa257849ee019d3fb3b64fb2c858887d89e"
 dependencies = [
  "as-raw-xcb-connection",
  "ctor-lite",
- "libloading",
+ "libloading 0.8.6",
  "pkg-config",
  "tracing",
 ]
@@ -5825,9 +5940,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
+name = "vk-parse"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81086c28be67a8759cd80cbb3c8f7b520e0874605fc5eb74d5a1c9c2d1878e79"
+dependencies = [
+ "xml-rs",
+]
+
+[[package]]
 name = "vtable"
 version = "0.2.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "const-field-offset",
  "portable-atomic",
@@ -5838,11 +5962,40 @@ dependencies = [
 [[package]]
 name = "vtable-macro"
 version = "0.2.0"
-source = "git+https://github.com/slint-ui/slint?branch=master#bf66b9756fb3e8cb3542b0eacee94704e2b28fca"
+source = "git+https://github.com/slint-ui/slint?branch=simon%2Flinuxkms-triple-buffer-gbm#4ef62f942cbdd18b8d759d569bf1a1c0551f73ee"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.90",
+]
+
+[[package]]
+name = "vulkano"
+version = "0.34.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70f4278f76307b3c388679234b397b4f90de29cdba53873c26b624ed82653d75"
+dependencies = [
+ "ahash",
+ "ash",
+ "bytemuck",
+ "core-graphics-types 0.1.3",
+ "crossbeam-queue",
+ "half",
+ "heck 0.4.1",
+ "indexmap 2.7.0",
+ "libloading 0.8.6",
+ "objc",
+ "once_cell",
+ "parking_lot",
+ "proc-macro2",
+ "quote",
+ "raw-window-handle 0.5.2",
+ "regex",
+ "serde",
+ "serde_json",
+ "smallvec",
+ "thread_local",
+ "vk-parse",
 ]
 
 [[package]]
@@ -6452,7 +6605,7 @@ dependencies = [
  "orbclient",
  "percent-encoding",
  "pin-project",
- "raw-window-handle",
+ "raw-window-handle 0.6.2",
  "redox_syscall 0.4.1",
  "rustix 0.38.42",
  "sctk-adwaita",
@@ -6544,7 +6697,7 @@ dependencies = [
  "as-raw-xcb-connection",
  "gethostname",
  "libc",
- "libloading",
+ "libloading 0.8.6",
  "once_cell",
  "rustix 0.38.42",
  "x11rb-protocol",
