@@ -167,7 +167,7 @@ fn parse_summary(mut summary: String) -> Option<String> {
         Some(summary.split_off(8))
     } else if summary.starts_with("Declined: ") {
         Some(summary.split_off(10))
-    } else if summary.starts_with("Cancelled: ") {
+    } else if summary.starts_with("Canceled: ") {
         None
     } else if summary.starts_with("Avlyst: ") {
         None
