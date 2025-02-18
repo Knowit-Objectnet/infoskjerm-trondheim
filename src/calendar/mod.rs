@@ -165,6 +165,12 @@ pub async fn parse_date(date_string: String) -> Option<DateTime<Local>> {
 fn parse_summary(mut summary: String) -> Option<String> {
     if summary.starts_with("Avvist: ") {
         Some(summary.split_off(8))
+    } else if summary.starts_with("Declined: ") {
+        Some(summary.split_off(10))
+    } else if summary.starts_with("Cancelled: ") {
+        None
+    } else if summary.starts_with("Avlyst: ") {
+        None
     } else {
         Some(summary)
     }
