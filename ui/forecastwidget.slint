@@ -46,7 +46,7 @@ component ForecastCell {
 }
 
 export component ForecastWidget {
-    in property <Forecast> today: {
+    in property <Forecast> now: {
         temp: "-1",
         precipitation: "2",
         icon: @image-url("../img/weather/partlycloudy_day.png")
@@ -60,9 +60,10 @@ export component ForecastWidget {
     HorizontalBox {
         width: 100%;
         ForecastCell {
-            forecast: today;
-            heading: "I dag";
+            forecast: now;
+            heading: "Nå";
         }
+
         ForecastCell {
             forecast: tomorrow;
             heading: "I morgen";
