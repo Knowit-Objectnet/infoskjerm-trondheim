@@ -9,7 +9,7 @@ use crate::{ui::*, StaticAssets};
 mod forecast_models;
 
 const API_URL: &str =
-    "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?lat=63.2549&lon=10.2342";
+    "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=63.2549&lon=10.2342";
 const USER_AGENT_STR: &str = "Knowit Infoskjerm - github.com/Knowit-Objectnet/infoskjerm-trondheim";
 
 pub fn setup(window: &MainWindow) {
@@ -25,16 +25,16 @@ async fn weather_worker_loop(window: Weak<MainWindow>) {
     loop {
         // TODO: Feilhåndter bedre enn unwrap !
         let data = get_forecast_data().await.unwrap();
-        let today = get_forecast_today(&data);
+        let now = get_forecast_now(&data);
         let tomorrow = get_forecast_tomorrow(&data);
-        display_forecast(&window, today, tomorrow);
+        display_forecast(&window, now, tomorrow);
         tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
     }
 }
 
-fn display_forecast(window: &Weak<MainWindow>, today: ForecastModel, tomorrow: ForecastModel) {
+fn display_forecast(window: &Weak<MainWindow>, now: ForecastModel, tomorrow: ForecastModel) {
     let _ = window.upgrade_in_event_loop(|window: MainWindow| {
-        window.set_todayForecast(today.into());
+        window.set_nowForecast(now.into());
         window.set_tomorrowForecast(tomorrow.into());
     });
 }
@@ -78,22 +78,25 @@ async fn get_forecast_data() -> Option<ForecastRaw> {
     }
 }
 
-fn get_forecast_today(data: &ForecastRaw) -> ForecastModel {
+fn get_forecast_now(data: &ForecastRaw) -> ForecastModel {
     let first_forecast = &data.properties.timeseries[0];
 
-    let next_6_hours = first_forecast
+    let temp = first_forecast
         .data
-        .next_6_hours
-        .as_ref()
-        .expect("next_6_hours should be in forecast");
+        .instant
+        .details
+        .air_temperature;
 
-    let temp =
-        (next_6_hours.details.air_temperature_max + next_6_hours.details.air_temperature_min) / 2.0;
+    let next_hour = first_forecast
+        .data
+        .next_1_hours
+        .as_ref()
+        .expect("next_1_hours should be in forecast");
 
     ForecastModel {
-        icon_name: next_6_hours.summary.symbol_code.to_owned(),
+        icon_name: next_hour.summary.symbol_code.to_owned(),
         temp: std::format!("{:.0}", temp),
-        precip: std::format!("{:.0}", next_6_hours.details.precipitation_amount),
+        precip: std::format!("{:.0}", next_hour.details.precipitation_amount)
     }
 }
 
@@ -122,12 +125,9 @@ fn get_forecast_tomorrow(data: &ForecastRaw) -> ForecastModel {
         .as_ref()
         .expect("next_6_hours should be in forecast");
 
-    let temp =
-        (next_6_hours.details.air_temperature_max + next_6_hours.details.air_temperature_min) / 2.0;
-
     ForecastModel {
         icon_name: next_6_hours.summary.symbol_code.to_owned(),
-        temp: std::format!("{:.0}", temp),
+        temp: std::format!("{:.0}", next_6_hours.details.air_temperature_max),
         precip: std::format!("{:.0}", next_6_hours.details.precipitation_amount),
     }
 }

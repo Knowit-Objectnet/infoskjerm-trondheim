@@ -14,7 +14,7 @@ import { SeasonEffects, Snowflake, SpookyFace, Bat } from "seasons.slint";
 export component MainWindow inherits Window {
     in property <string> time: "12:34";
     in property <string> date: "Mandag 5. august";
-    in property <Forecast> todayForecast: {
+    in property <Forecast> nowForecast: {
         temp: "-1",
         precipitation: "2",
         icon: @image-url("../img/weather/partlycloudy_day.png")
@@ -98,7 +98,7 @@ export component MainWindow inherits Window {
             }
 
             ForecastWidget {
-                today: todayForecast;
+                now: nowForecast;
                 tomorrow: tomorrowForecast;
             }
 
