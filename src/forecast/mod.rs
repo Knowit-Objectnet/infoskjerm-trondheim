@@ -9,7 +9,7 @@ use crate::{ui::*, StaticAssets};
 mod forecast_models;
 
 const API_URL: &str =
-    "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?lat=63.2549&lon=10.2342";
+    "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=63.2549&lon=10.2342";
 const USER_AGENT_STR: &str = "Knowit Infoskjerm - github.com/Knowit-Objectnet/infoskjerm-trondheim";
 
 pub fn setup(window: &MainWindow) {
