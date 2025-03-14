@@ -125,12 +125,9 @@ fn get_forecast_tomorrow(data: &ForecastRaw) -> ForecastModel {
         .as_ref()
         .expect("next_6_hours should be in forecast");
 
-    let temp =
-        (next_6_hours.details.air_temperature_max + next_6_hours.details.air_temperature_min) / 2.0;
-
     ForecastModel {
         icon_name: next_6_hours.summary.symbol_code.to_owned(),
-        temp: std::format!("{:.0}", temp),
+        temp: std::format!("{:.0}", next_6_hours.details.air_temperature_max),
         precip: std::format!("{:.0}", next_6_hours.details.precipitation_amount),
     }
 }
