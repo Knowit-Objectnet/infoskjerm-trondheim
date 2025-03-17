@@ -22,9 +22,15 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
+    - name: Cache cargo bin
+      uses: actions/cache@v4
+      with:
+        path: ~/.cargo/bin
+        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Cache cargo registry
       uses: actions/cache@v4
@@ -44,12 +50,21 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
+    - uses: mlugg/setup-zig@v1
+
     - name: Install Arm compile target
       run: rustup target add armv7-unknown-linux-gnueabihf
 
+    - name: Install Zigbuild
+      run: |
+        if ! command -v cargo-zigbuild &> /dev/null
+        then
+            cargo install cargo-zigbuild
+        fi
+
     - name: Build and tar
       run: |
-        cargo build --target armv7-unknown-linux-gnueabihf --release
+        cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
         chmod 777 ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
         chmod 777 update.py
         tar -czvf infoskjerm.tar.gz update.py \
