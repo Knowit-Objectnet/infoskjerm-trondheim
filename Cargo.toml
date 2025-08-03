@@ -24,8 +24,10 @@ log = "0.4.20"
 env_logger = "0.10.1"
 tokio = { version = "1.35.1", features = ["rt-multi-thread"] }
 tide = "0.16.0"
-ical = "0.10"
 rand = "0.8.5"
+dirs = "6.0.0"
+uuid = { version = "1.17.0", features = ["serde", "v4"] }
+askama = "0.14.0"
 
 [build-dependencies]
 slint-build = "=1.8.0"
