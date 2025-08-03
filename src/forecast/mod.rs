@@ -1,5 +1,6 @@
 use log::{error, info};
 use slint::{Image, Rgba8Pixel, SharedPixelBuffer, Weak};
+use std::string::ToString;
 use std::thread;
 
 use self::forecast_models::{ForecastModel, ForecastRaw};
@@ -12,6 +13,14 @@ const API_URL: &str =
     "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=63.2549&lon=10.2342";
 const USER_AGENT_STR: &str = "Knowit Infoskjerm - github.com/Knowit-Objectnet/infoskjerm-trondheim";
 
+fn get_empty_forecast() -> ForecastModel {
+    ForecastModel {
+        icon_name: "None".to_string(),
+        temp: "x".to_string(),
+        precip: "x".to_string(),
+    }
+}
+
 pub fn setup(window: &MainWindow) {
     let window_weak = window.as_weak();
     thread::spawn(move || {
@@ -23,11 +32,15 @@ pub fn setup(window: &MainWindow) {
 
 async fn weather_worker_loop(window: Weak<MainWindow>) {
     loop {
-        // TODO: Feilhåndter bedre enn unwrap !
-        let data = get_forecast_data().await.unwrap();
-        let now = get_forecast_now(&data);
-        let tomorrow = get_forecast_tomorrow(&data);
-        display_forecast(&window, now, tomorrow);
+        let response = get_forecast_data().await;
+        if response == None {
+            display_forecast(&window, get_empty_forecast(), get_empty_forecast());
+        } else {
+            let data = response.unwrap();
+            let now = get_forecast_now(&data);
+            let tomorrow = get_forecast_tomorrow(&data);
+            display_forecast(&window, now, tomorrow);
+        }
         tokio::time::sleep(std::time::Duration::from_secs(60 * 15)).await;
     }
 }
@@ -44,7 +57,7 @@ impl From<ForecastModel> for Forecast {
         Forecast {
             icon: get_icon(val.icon_name),
             precipitation: val.precip.into(),
-            temp: val.temp.into()
+            temp: val.temp.into(),
         }
     }
 }
@@ -81,11 +94,7 @@ async fn get_forecast_data() -> Option<ForecastRaw> {
 fn get_forecast_now(data: &ForecastRaw) -> ForecastModel {
     let first_forecast = &data.properties.timeseries[0];
 
-    let temp = first_forecast
-        .data
-        .instant
-        .details
-        .air_temperature;
+    let temp = first_forecast.data.instant.details.air_temperature;
 
     let next_hour = first_forecast
         .data
@@ -96,7 +105,7 @@ fn get_forecast_now(data: &ForecastRaw) -> ForecastModel {
     ForecastModel {
         icon_name: next_hour.summary.symbol_code.to_owned(),
         temp: std::format!("{:.0}", temp),
-        precip: std::format!("{:.0}", next_hour.details.precipitation_amount)
+        precip: std::format!("{:.0}", next_hour.details.precipitation_amount),
     }
 }
 
