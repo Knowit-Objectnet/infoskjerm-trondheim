@@ -9,8 +9,12 @@ use crate::calendar::calendar_models::CalendarEvent;
 use crate::calendar::storage::get_calendar;
 use chrono::{Local, Locale, TimeZone};
 use slint::{VecModel, Weak};
-use std::{cmp::min, rc::Rc, thread};
+use std::{cmp::min, env, rc::Rc, thread};
 use tokio::runtime::Runtime;
+
+fn get_server_url() -> String {
+    env::var("CALENDAR_SERVER_URL").unwrap_or(String::from("http://localhost:1338/"))
+}
 
 pub fn setup(window: &MainWindow) {
     let window_weak = window.as_weak();
@@ -21,7 +25,7 @@ pub fn setup(window: &MainWindow) {
             .unwrap()
             .block_on(server::calendar_endpoint_server())
     });
-    //thread for tracking food
+    //thread for displaying calendar events
     thread::spawn(move || {
         tokio::runtime::Runtime::new()
             .unwrap()
@@ -63,6 +67,12 @@ async fn display_calendar(window_weak: &Weak<MainWindow>, calendar: Vec<Calendar
             }
 
             window.set_events(Rc::new(calendar_events).into());
+
+            let mut server_url = get_server_url();
+            if !server_url.ends_with('/') {
+                server_url.push('/');
+            }
+            window.set_calendarServerUrl(server_url.into());
         })
         .unwrap();
 }
