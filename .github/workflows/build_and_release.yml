@@ -23,8 +23,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04 # Use older Ubuntu for better glibc compatibility
-    container:
-      image: ubuntu:18.04 # Even older base for maximum compatibility
     steps:
       - uses: actions/checkout@v3
 
