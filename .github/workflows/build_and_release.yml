@@ -1,19 +1,19 @@
 name: Build and release
 on:
   push:
-   tags:
-   - 'v*'
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       dry_run:
         type: boolean
-        description: 'Dry Run'
+        description: "Dry Run"
         required: false
         default: false
       tag:
-        description: 'Tag'
+        description: "Tag"
         required: true
-        default: 'v0.0.0'
+        default: "v0.0.0"
 
 run-name: ${{ github.event.inputs.dry_run == 'true' && 'Dry run' || github.event.inputs.tag || github.ref }}
 
@@ -24,58 +24,58 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Cache cargo bin
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/bin
-        key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo bin
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin
+          key: ${{ runner.os }}-cargo-bin-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Cache cargo registry
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/registry
-        key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Cache cargo index
-      uses: actions/cache@v4
-      with:
-        path: ~/.cargo/git
-        key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo index
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Cache cargo build
-      uses: actions/cache@v4
-      with:
-        path: target
-        key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+      - name: Cache cargo build
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
-    - uses: mlugg/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
 
-    - name: Install Arm compile target
-      run: rustup target add armv7-unknown-linux-gnueabihf
+      - name: Install Arm compile target
+        run: rustup target add armv7-unknown-linux-gnueabihf
 
-    - name: Install Zigbuild
-      run: |
-        if ! command -v cargo-zigbuild &> /dev/null
-        then
-            cargo install cargo-zigbuild
-        fi
+      - name: Install Zigbuild
+        run: |
+          if ! command -v cargo-zigbuild &> /dev/null
+          then
+              cargo install cargo-zigbuild
+          fi
 
-    - name: Build and tar
-      run: |
-        cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
-        chmod 777 ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
-        chmod 777 update.py
-        tar -czvf infoskjerm.tar.gz update.py \
-          -C ./target/armv7-unknown-linux-gnueabihf/release infoskjerm
-    
-    - name: Create Release
-      if: ${{ ! inputs.dry_run }}
-      uses: softprops/action-gh-release@v2
-      with:
-        files: infoskjerm.tar.gz
-        make_latest: "true"
-        generate_release_notes: true
-        name: Release ${{ github.event.inputs.tag || github.ref }}
-        tag_name: ${{ github.event.inputs.tag || github.ref }}
+      - name: Build and tar
+        run: |
+          cargo zigbuild --target armv7-unknown-linux-gnueabihf --release
+          chmod 777 ./target/armv7-unknown-linux-gnueabihf/release/infoskjerm
+          chmod 777 update.py
+          tar -czvf infoskjerm.tar.gz update.py \
+            -C ./target/armv7-unknown-linux-gnueabihf/release infoskjerm
+
+      - name: Create Release
+        if: ${{ ! inputs.dry_run }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: infoskjerm.tar.gz
+          make_latest: "true"
+          generate_release_notes: true
+          name: Release ${{ github.event.inputs.tag || github.ref }}
+          tag_name: ${{ github.event.inputs.tag || github.ref }}
