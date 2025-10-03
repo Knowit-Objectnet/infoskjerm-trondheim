@@ -40,6 +40,7 @@ export component MainWindow inherits Window {
         summary: "Placeholder calendar event",
         date: "31. April",
     }];
+    in property <string> calendarServerUrl: "http://localhost:1338/";
 
     in property <[Snowflake]> snowflakes;
     in-out property <SpookyFace> spooky_face;
@@ -108,6 +109,7 @@ export component MainWindow inherits Window {
             CalendarWidget {
                 events: events;
                 meetings: [];
+                calendarServerUrl: calendarServerUrl;
             }
 
             TransportationWidget {

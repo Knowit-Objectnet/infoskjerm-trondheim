@@ -6,14 +6,25 @@ export struct Event {
 }
 
 component Headings {
+    in property <string> calendarServerUrl: "localhost:1338/";
+
     VerticalLayout {
         padding-bottom: 29px;
         spacing: 32px;
-        Text {
-            font-size: 4rem;
-            height: 5rem;
-            color: #FEFBE6;
-            text: "Kalender";
+        VerticalLayout {
+            Text {
+                font-size: 4rem;
+                height: 5rem;
+                color: #FEFBE6;
+                text: "Kalender";
+            }
+
+            Text {
+                font-size: 1.5rem;
+                color: #FEFBE680;
+                font-italic: true;
+                text: "Legg inn hendelser her: " + calendarServerUrl + "calendar";
+            }
         }
 
         HorizontalLayout {
@@ -127,10 +138,13 @@ export component CalendarWidget {
             icon: @image-url("../img/calendar/time.png"),
         }
     ];
+    in property <string> calendarServerUrl;
     VerticalLayout {
         alignment: start;
         padding-top: 1rem;
-        Headings { }
+        Headings {
+            calendarServerUrl: calendarServerUrl;
+        }
 
         HorizontalLayout {
             spacing: 56px;
